@@ -61,15 +61,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    backgroundColor: colors.primary, // Sacred Blue - dark contrast
-    borderRadius: radius.sm, // Sharper corners - more tile-like
+    backgroundColor: '#141414', // Match expanded content dark
+    borderRadius: radius.sm,
     paddingVertical: spacing.sm + 4,
     paddingHorizontal: spacing.md,
     ...Platform.select({
       ios: {
-        shadowColor: colors.primary,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.2,
         shadowRadius: 8,
       },
       android: {

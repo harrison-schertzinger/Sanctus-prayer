@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronDown } from 'lucide-react-native';
+import { ChevronDown, Wind, BookOpen, Heart } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { colors, spacing, radius } from '@/lib/colors';
 import { useStorage } from '@/hooks/useStorage';
@@ -137,21 +137,90 @@ export default function PrayerScreen() {
             </View>
           </PressableScale>
 
-          {/* Expanded Sacred Phrases Section */}
+          {/* Expanded Prayer Journey - Seamless dark panel */}
           {expanded && (
             <View style={styles.expandedContent}>
-              <View style={styles.phrasesSection}>
-                <Text style={styles.phrasesLabel}>THE SACRED PHRASES</Text>
-                <View style={styles.phraseRow}>
-                  <Text style={styles.breathLabel}>Breathe In:</Text>
-                  <Text style={styles.phraseText}>{practice.breathIn}</Text>
+              {/* Phase 1: Recollection */}
+              <View style={styles.phaseSection}>
+                <View style={styles.phaseHeader}>
+                  <View style={[styles.phaseAccent, { backgroundColor: '#1A365D' }]} />
+                  <View style={styles.phaseHeaderContent}>
+                    <View style={styles.phaseTitleRow}>
+                      <Wind size={18} color="#7BA3D4" strokeWidth={2} />
+                      <Text style={styles.phaseNumber}>01</Text>
+                    </View>
+                    <Text style={[styles.phaseTitle, { color: '#7BA3D4' }]}>Recollection</Text>
+                    <Text style={styles.phaseSubtitle}>Sacred Breathwork</Text>
+                  </View>
                 </View>
-                <View style={styles.phraseRow}>
-                  <Text style={styles.breathLabel}>Breathe Out:</Text>
-                  <Text style={styles.phraseText}>{practice.breathOut}</Text>
+                <View style={styles.phaseBody}>
+                  <Text style={styles.phaseDescription}>
+                    Center yourself in God's presence. Let go of distractions through rhythmic breathing paired with sacred phrases.
+                  </Text>
+                  <View style={styles.breathContainer}>
+                    <View style={styles.breathRow}>
+                      <Text style={styles.breathDirection}>Inhale</Text>
+                      <Text style={styles.breathPhrase}>{practice.breathIn}</Text>
+                    </View>
+                    <View style={[styles.breathRow, { marginBottom: 0 }]}>
+                      <Text style={styles.breathDirection}>Exhale</Text>
+                      <Text style={styles.breathPhrase}>{practice.breathOut}</Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.descriptionContainer}>
-                  <Text style={styles.descriptionText}>{practice.description}</Text>
+              </View>
+
+              {/* Phase 2: Contemplation */}
+              <View style={styles.phaseSection}>
+                <View style={styles.phaseHeader}>
+                  <View style={[styles.phaseAccent, { backgroundColor: '#B8860B' }]} />
+                  <View style={styles.phaseHeaderContent}>
+                    <View style={styles.phaseTitleRow}>
+                      <BookOpen size={18} color="#D4AF37" strokeWidth={2} />
+                      <Text style={styles.phaseNumber}>02</Text>
+                    </View>
+                    <Text style={[styles.phaseTitle, { color: '#D4AF37' }]}>Contemplation</Text>
+                    <Text style={styles.phaseSubtitle}>Scriptural Meditation</Text>
+                  </View>
+                </View>
+                <View style={styles.phaseBody}>
+                  <Text style={styles.phaseDescription}>
+                    Rest in Scripture. Allow God's Word to wash over you—not analyzing, but receiving. Let truth sink deep into your heart, cultivating trust in His providence.
+                  </Text>
+                </View>
+              </View>
+
+              {/* Phase 3: Praise, Petition, Visualization */}
+              <View style={[styles.phaseSection, { borderBottomWidth: 0 }]}>
+                <View style={styles.phaseHeader}>
+                  <View style={[styles.phaseAccent, { backgroundColor: '#722F37' }]} />
+                  <View style={styles.phaseHeaderContent}>
+                    <View style={styles.phaseTitleRow}>
+                      <Heart size={18} color="#C4737B" strokeWidth={2} />
+                      <Text style={styles.phaseNumber}>03</Text>
+                    </View>
+                    <Text style={[styles.phaseTitle, { color: '#C4737B' }]}>Praise & Petition</Text>
+                    <Text style={styles.phaseSubtitle}>Active, Imaginative Prayer</Text>
+                  </View>
+                </View>
+                <View style={styles.phaseBody}>
+                  <Text style={styles.phaseDescription}>
+                    Engage your heart and imagination in active communion with God:
+                  </Text>
+                  <View style={styles.actionList}>
+                    <View style={styles.actionItem}>
+                      <Text style={styles.actionLabel}>Gratitude</Text>
+                      <Text style={styles.actionText}>Thank God for specific blessings in your life</Text>
+                    </View>
+                    <View style={styles.actionItem}>
+                      <Text style={styles.actionLabel}>Petition</Text>
+                      <Text style={styles.actionText}>Present your needs and desires to Him with trust</Text>
+                    </View>
+                    <View style={styles.actionItem}>
+                      <Text style={styles.actionLabel}>Visualize</Text>
+                      <Text style={styles.actionText}>See and emotionally embrace your goals as already fulfilled through His grace</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
@@ -280,61 +349,114 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 
-  // Expanded content
+  // Expanded content - Seamless dark panel
   expandedContent: {
-    marginTop: -radius.xl, // Overlap with card
-    paddingTop: radius.xl + spacing.md,
-    backgroundColor: colors.surface,
+    marginTop: -radius.xl - 1,
+    backgroundColor: '#141414',
     borderBottomLeftRadius: radius.xl,
     borderBottomRightRadius: radius.xl,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    overflow: 'hidden',
   },
-  phrasesSection: {
-    padding: spacing.lg,
-    paddingTop: spacing.sm,
+
+  // Phase Section - Seamless tile
+  phaseSection: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.06)',
   },
-  phrasesLabel: {
+  phaseHeader: {
+    flexDirection: 'row',
+  },
+  phaseAccent: {
+    width: 4,
+  },
+  phaseHeaderContent: {
+    flex: 1,
+    paddingTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.sm,
+  },
+  phaseTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  phaseNumber: {
+    fontSize: 24,
+    fontWeight: '200',
+    color: 'rgba(255,255,255,0.15)',
+  },
+  phaseTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  phaseSubtitle: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    color: 'rgba(255,255,255,0.5)',
+  },
+  phaseBody: {
+    paddingLeft: 4 + spacing.lg, // Align with header content
+    paddingRight: spacing.lg,
+    paddingBottom: spacing.lg,
+  },
+  phaseDescription: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: 'rgba(255,255,255,0.7)',
+  },
+
+  // Breath Container
+  breathContainer: {
+    marginTop: spacing.md,
+    backgroundColor: 'rgba(26, 54, 93, 0.2)',
+    borderRadius: radius.sm,
+    padding: spacing.md,
+  },
+  breathRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: spacing.sm,
+  },
+  breathDirection: {
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 1.5,
-    color: colors.gold,
-    marginBottom: spacing.md,
+    color: '#7BA3D4',
+    textTransform: 'uppercase',
+    width: 55,
   },
-  phraseRow: {
-    marginBottom: spacing.sm,
-  },
-  breathLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.textMuted,
-    marginBottom: 2,
-  },
-  phraseText: {
-    fontSize: 17,
+  breathPhrase: {
+    flex: 1,
+    fontSize: 16,
     fontFamily: 'Georgia',
     fontStyle: 'italic',
-    color: colors.text,
+    color: '#FFFFFF',
   },
-  descriptionContainer: {
+
+  // Action List for Phase 3
+  actionList: {
     marginTop: spacing.md,
-    paddingTop: spacing.md,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
   },
-  descriptionText: {
-    fontSize: 14,
-    lineHeight: 22,
-    color: colors.textSecondary,
+  actionItem: {
+    flexDirection: 'row',
+    marginBottom: spacing.sm,
+  },
+  actionLabel: {
+    width: 80,
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    color: '#C4737B',
+    textTransform: 'uppercase',
+  },
+  actionText: {
+    flex: 1,
+    fontSize: 13,
+    lineHeight: 20,
+    color: 'rgba(255,255,255,0.6)',
   },
 
   // Timer Section
