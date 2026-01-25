@@ -180,35 +180,35 @@ export default function VisionPage() {
       </section>
 
       {/* Wearable/Technology Section */}
-      <section className="py-20 bg-[#0A1628] text-white overflow-hidden">
+      <section className="py-24 bg-[#F5F3EF] overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimatedSection>
               <p className="text-[#B8960C] text-sm tracking-widest uppercase mb-4">THE FUTURE</p>
-              <h2 className="font-serif text-3xl md:text-4xl mb-6">
+              <h2 className="font-serif text-3xl md:text-4xl text-[#1A1A1A] mb-6">
                 Technology in Service of the Sacred
               </h2>
-              <p className="text-white/70 mb-6 leading-relaxed">
+              <p className="text-[#6B6B6B] mb-6 leading-relaxed">
                 A wearable device that guides your breath through gentle haptic pulses,
                 tracks your heart rate variability, and helps you build a consistent
                 practice — without ever looking at a screen.
               </p>
-              <p className="text-[#B8960C] italic">Coming after prototype validation.</p>
+              <p className="text-[#B8960C] italic font-medium">Coming after prototype validation.</p>
             </AnimatedSection>
 
             <AnimatedSection delay={0.2} direction="right">
-              <div className="relative flex items-center justify-center">
+              <div className="relative flex items-center justify-center py-8">
                 <Image
                   src="/images/wearable-clean.png"
                   alt="Sanctus wearable device"
-                  width={400}
-                  height={400}
-                  className="object-contain"
-                  quality={90}
+                  width={500}
+                  height={500}
+                  className="object-contain drop-shadow-2xl"
+                  quality={95}
                 />
                 {/* Subtle glow effect behind device */}
                 <div className="absolute inset-0 -z-10 flex items-center justify-center">
-                  <div className="w-64 h-64 rounded-full bg-[#B8960C]/10 blur-3xl" />
+                  <div className="w-80 h-80 rounded-full bg-[#B8960C]/15 blur-3xl" />
                 </div>
               </div>
             </AnimatedSection>
