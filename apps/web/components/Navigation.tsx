@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
+  { href: '/', label: 'Home' },
   { href: '/vision', label: 'Vision' },
   { href: '/problem', label: 'Problem' },
   { href: '/journey', label: 'Journey' },
@@ -51,9 +52,14 @@ export default function Navigation() {
               height={40}
               className="w-10 h-10"
             />
-            <span className="text-xl font-serif tracking-[0.2em] text-[#0A1628]">
-              SANCTUS
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xl font-serif tracking-[0.2em] text-[#0A1628] leading-tight">
+                SANCTUS
+              </span>
+              <span className="text-[10px] tracking-[0.15em] text-[#6B6B6B] uppercase">
+                Health & Performance
+              </span>
+            </div>
             <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#B8960C] transition-all duration-300 group-hover:w-full" />
           </Link>
 
@@ -125,7 +131,12 @@ export default function Navigation() {
                     height={36}
                     className="w-9 h-9"
                   />
-                  <span className="font-serif tracking-[0.15em] text-[#0A1628]">SANCTUS</span>
+                  <div className="flex flex-col">
+                    <span className="font-serif tracking-[0.15em] text-[#0A1628] leading-tight">SANCTUS</span>
+                    <span className="text-[9px] tracking-[0.12em] text-[#6B6B6B] uppercase">
+                      Health & Performance
+                    </span>
+                  </div>
                 </Link>
                 <div className="flex flex-col gap-6">
                   {navLinks.map((link, index) => (
