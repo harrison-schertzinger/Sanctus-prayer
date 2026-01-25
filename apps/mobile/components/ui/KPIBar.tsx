@@ -23,10 +23,10 @@ export function KPIBar({ stats }: KPIBarProps) {
       {stats.map((stat, index) => (
         <React.Fragment key={stat.label}>
           <View style={styles.statItem}>
-            <Text style={styles.label}>{stat.label}</Text>
             <Text style={[styles.value, stat.color && { color: stat.color }]}>
               {stat.value}
             </Text>
+            <Text style={styles.label}>{stat.label.toUpperCase()}</Text>
           </View>
           {index < stats.length - 1 && <View style={styles.divider} />}
         </React.Fragment>
@@ -39,11 +39,11 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-evenly',
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.sm,
-    // Soft iOS shadow
+    borderRadius: radius.sm,
+    paddingVertical: spacing.sm + 4,
+    paddingHorizontal: spacing.md,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
@@ -52,16 +52,17 @@ const styles = StyleSheet.create({
   },
   statItem: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.xs,
+    justifyContent: 'center',
+    gap: spacing.xs,
   },
   label: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '600',
     letterSpacing: 1,
     color: colors.textMuted,
-    textTransform: 'uppercase',
-    marginBottom: 4,
+    marginLeft: spacing.xs,
   },
   value: {
     fontSize: 18,
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: 1,
-    height: 32,
+    height: 24,
     backgroundColor: colors.border,
   },
 });

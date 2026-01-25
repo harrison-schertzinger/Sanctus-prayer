@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Text, Animated } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Image, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Check, Flame } from 'lucide-react-native';
-import { colors, spacing, radius, shadows } from '@/lib/colors';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Check } from 'lucide-react-native';
+import { colors, spacing, radius } from '@/lib/colors';
 import { useStorage } from '@/hooks/useStorage';
 import { useTrackerStats } from '@/hooks/useTrackerStats';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
-import { AnimatedProgressBar } from '@/components/ui/AnimatedProgressBar';
+import { KPIBar } from '@/components/ui/KPIBar';
 
 // 40-day journey configuration
 const TOTAL_DAYS = 40;
@@ -62,53 +63,78 @@ export default function TrackerScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* 40-Day Progress Section */}
+        {/* KPI Stats Bar */}
         <AnimatedEntrance delay={0}>
-        <View style={styles.progressSection}>
-          <Text style={styles.sectionLabel}>40-DAY JOURNEY</Text>
-          <View style={styles.progressHeader}>
-            <Text style={styles.dayCounter}>Day {currentDay}</Text>
-            <Text style={styles.dayTotal}>of {TOTAL_DAYS}</Text>
-          </View>
-
-          {/* Progress Bar */}
-          <View style={styles.progressBarContainer}>
-            <AnimatedProgressBar
-              progress={currentDay / TOTAL_DAYS}
-              height={8}
-              delay={200}
-            />
-          </View>
-
-          {/* Day Markers */}
-          <View style={styles.dayMarkers}>
-            {[1, 10, 20, 30, 40].map(day => (
-              <View key={day} style={styles.dayMarker}>
-                <View style={[
-                  styles.markerDot,
-                  currentDay >= day && styles.markerDotActive
-                ]} />
-                <Text style={[
-                  styles.markerText,
-                  currentDay >= day && styles.markerTextActive
-                ]}>
-                  {day}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
+          <KPIBar
+            stats={[
+              { label: 'Day', value: currentDay, color: colors.primary },
+              { label: 'Today', value: `${completedToday}/4` },
+              { label: 'Streak', value: stats.currentStreak, color: '#E67E22' },
+            ]}
+          />
         </AnimatedEntrance>
 
-        {/* Daily Checklist */}
-        <AnimatedEntrance delay={100}>
-        <View style={styles.checklistSection}>
-          <View style={styles.checklistHeader}>
-            <Text style={styles.sectionLabel}>TODAY'S RHYTHM</Text>
-            <Text style={styles.completionCount}>{completedToday}/4</Text>
+        {/* 40-Day Journey Card */}
+        <AnimatedEntrance delay={50}>
+          <View style={styles.journeyCard}>
+            {/* Cover Image */}
+            <Image
+              source={require('@/assets/peace-in-his-presence.png')}
+              style={styles.journeyImage}
+              resizeMode="cover"
+            />
+            {/* Gradient overlay */}
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.85)']}
+              style={styles.imageOverlay}
+            >
+              <Text style={styles.journeyLabel}>40-DAY JOURNEY</Text>
+              <View style={styles.progressHeader}>
+                <Text style={styles.dayCounter}>Day {currentDay}</Text>
+                <Text style={styles.dayTotal}>of {TOTAL_DAYS}</Text>
+              </View>
+
+              {/* 40-Day Grid */}
+              <View style={styles.dayGrid}>
+                {Array.from({ length: TOTAL_DAYS }, (_, i) => i + 1).map(day => {
+                  const isCompleted = day < currentDay;
+                  const isCurrent = day === currentDay;
+
+                  if (isCompleted) {
+                    return (
+                      <LinearGradient
+                        key={day}
+                        colors={['#F5D998', '#D4AF37', '#C9A227']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.dayTileCompleted}
+                      >
+                        <Check size={12} color="#5C4A1F" strokeWidth={3} />
+                      </LinearGradient>
+                    );
+                  }
+
+                  return (
+                    <View
+                      key={day}
+                      style={[
+                        styles.dayTile,
+                        isCurrent && styles.dayTileCurrent,
+                      ]}
+                    >
+                      {isCurrent && (
+                        <Text style={styles.currentDayText}>{day}</Text>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            </LinearGradient>
           </View>
 
-          <View style={styles.checklistCard}>
+          {/* Daily Checklist - Seamless dark panel below image */}
+          <View style={styles.checklistPanel}>
+            <Text style={styles.checklistTitle}>TODAY'S RHYTHM</Text>
             {CHECKLIST_ITEMS.map((item, index) => (
               <View
                 key={item.id}
@@ -122,7 +148,7 @@ export default function TrackerScreen() {
                   todayCompletions[item.id] && styles.checkboxChecked
                 ]}>
                   {todayCompletions[item.id] && (
-                    <Check size={14} color={colors.textInverse} strokeWidth={3} />
+                    <Check size={14} color="#FFFFFF" strokeWidth={3} />
                   )}
                 </View>
                 <Text style={[
@@ -134,63 +160,12 @@ export default function TrackerScreen() {
               </View>
             ))}
           </View>
-        </View>
-        </AnimatedEntrance>
-
-        {/* Streak Callout */}
-        <AnimatedEntrance delay={200}>
-        <View style={styles.streakSection}>
-          <View style={styles.streakCard}>
-            <View style={styles.streakIcon}>
-              <Flame size={28} color={colors.gold} fill={colors.goldFaint} />
-            </View>
-            <View style={styles.streakContent}>
-              <Text style={styles.streakValue}>{stats.currentStreak}</Text>
-              <Text style={styles.streakLabel}>day streak</Text>
-            </View>
-            {stats.longestStreak > stats.currentStreak && (
-              <View style={styles.streakBest}>
-                <Text style={styles.streakBestLabel}>Best</Text>
-                <Text style={styles.streakBestValue}>{stats.longestStreak}</Text>
-              </View>
-            )}
-          </View>
-        </View>
-        </AnimatedEntrance>
-
-        {/* Stats Row */}
-        <AnimatedEntrance delay={300}>
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.totalSessions}</Text>
-            <Text style={styles.statLabel}>sessions</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{formatMinutes(stats.totalMinutes)}</Text>
-            <Text style={styles.statLabel}>total time</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.thisWeek}</Text>
-            <Text style={styles.statLabel}>this week</Text>
-          </View>
-        </View>
         </AnimatedEntrance>
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-function formatMinutes(minutes: number): string {
-  if (minutes < 60) {
-    return `${minutes}m`;
-  }
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
 }
 
 const styles = StyleSheet.create({
@@ -203,19 +178,44 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.lg,
-    paddingTop: spacing.xl,
+    paddingTop: spacing.md,
+    gap: spacing.lg,
   },
 
-  // Progress Section
-  progressSection: {
-    marginBottom: spacing.xl,
+  // Journey Card with Image
+  journeyCard: {
+    height: 340,
+    borderRadius: radius.xl,
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
-  sectionLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 1.5,
-    color: colors.primary,
-    marginBottom: spacing.md,
+  journeyImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+  },
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+    padding: spacing.xl,
+  },
+  journeyLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 2,
+    color: 'rgba(255,255,255,0.7)',
+    marginBottom: spacing.xs,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -223,93 +223,83 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   dayCounter: {
-    fontSize: 36,
-    fontWeight: '200',
-    color: colors.text,
+    fontSize: 32,
+    fontWeight: '300',
+    color: '#FFFFFF',
+    fontFamily: 'Georgia',
   },
   dayTotal: {
-    fontSize: 16,
-    color: colors.textSecondary,
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.7)',
     marginLeft: spacing.sm,
   },
-  progressBarContainer: {
-    marginBottom: spacing.md,
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: colors.surfaceLight,
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: colors.gold,
-    borderRadius: 4,
-  },
-  dayMarkers: {
+
+  // 40-Day Grid
+  dayGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xs,
+    flexWrap: 'wrap',
+    gap: 5,
+    justifyContent: 'center',
   },
-  dayMarker: {
+  dayTile: {
+    width: 30,
+    height: 38,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
   },
-  markerDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.border,
+  dayTileCompleted: {
+    width: 30,
+    height: 38,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  markerDotActive: {
-    backgroundColor: colors.gold,
+  dayTileCurrent: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: colors.gold,
   },
-  markerText: {
-    fontSize: 11,
-    color: colors.textMuted,
-  },
-  markerTextActive: {
+  currentDayText: {
+    fontSize: 12,
+    fontWeight: '700',
     color: colors.gold,
-    fontWeight: '600',
   },
 
-  // Checklist Section
-  checklistSection: {
-    marginBottom: spacing.xl,
+  // Checklist Panel - Seamless dark
+  checklistPanel: {
+    marginTop: -radius.xl - 1,
+    backgroundColor: '#141414',
+    borderBottomLeftRadius: radius.xl,
+    borderBottomRightRadius: radius.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.sm,
   },
-  checklistHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-  },
-  completionCount: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  checklistCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    overflow: 'hidden',
-    ...shadows.md,
+  checklistTitle: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 2,
+    color: 'rgba(255,255,255,0.5)',
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
   },
   checklistItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.md,
-    paddingVertical: 18,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   checklistItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(255,255,255,0.06)',
   },
   checkbox: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: colors.border,
+    borderColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
@@ -319,93 +309,12 @@ const styles = StyleSheet.create({
     borderColor: colors.success,
   },
   checklistLabel: {
-    fontSize: 16,
-    color: colors.text,
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.8)',
   },
   checklistLabelChecked: {
-    color: colors.textMuted,
-  },
-
-  // Streak Section
-  streakSection: {
-    marginBottom: spacing.lg,
-  },
-  streakCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    ...shadows.md,
-  },
-  streakIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.goldFaint,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  streakContent: {
-    flex: 1,
-  },
-  streakValue: {
-    fontSize: 40,
-    fontWeight: '200',
-    color: colors.text,
-    lineHeight: 44,
-  },
-  streakLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: -2,
-  },
-  streakBest: {
-    alignItems: 'center',
-    paddingLeft: spacing.md,
-    borderLeftWidth: 1,
-    borderLeftColor: colors.border,
-  },
-  streakBestLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    color: colors.textMuted,
-    marginBottom: 2,
-  },
-  streakBestValue: {
-    fontSize: 22,
-    fontWeight: '300',
-    color: colors.gold,
-  },
-
-  // Stats Row
-  statsRow: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    flexDirection: 'row',
-    ...shadows.sm,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '300',
-    color: colors.text,
-    marginBottom: 2,
-  },
-  statLabel: {
-    fontSize: 11,
-    color: colors.textMuted,
-  },
-  statDivider: {
-    width: 1,
-    backgroundColor: colors.border,
-    marginVertical: spacing.xs,
+    color: 'rgba(255,255,255,0.4)',
+    textDecorationLine: 'line-through',
   },
 
   bottomSpacer: {

@@ -1,62 +1,28 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Animated } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Image, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Moon, Sun, Cloud, Sunrise, Check } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Moon, BookOpen, Heart, Check } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import { colors, spacing, radius, shadows } from '@/lib/colors';
-import { getTodayNightScripture } from '@/lib/content';
+import { colors, spacing, radius } from '@/lib/colors';
 import { useStorage } from '@/hooks/useStorage';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { NightButton } from '@/components/ui/PremiumButton';
-
-// Examen sections
-const EXAMEN_SECTIONS = [
-  {
-    id: 'consolation',
-    title: 'Consolation',
-    subtitle: 'Where did you feel God today?',
-    icon: Sun,
-    prompts: [
-      'What moment brought you peace?',
-      'When did you feel most alive?',
-      'What are you grateful for?',
-    ],
-  },
-  {
-    id: 'desolation',
-    title: 'Desolation',
-    subtitle: 'What weighed on you?',
-    icon: Cloud,
-    prompts: [
-      'What caused anxiety or stress?',
-      'Where did you feel distant from God?',
-      'What do you need to release?',
-    ],
-  },
-  {
-    id: 'tomorrow',
-    title: 'Tomorrow',
-    subtitle: 'What will you carry forward?',
-    icon: Sunrise,
-    prompts: [
-      'What grace do you need?',
-      'Who needs your prayers?',
-      'What intention will you hold?',
-    ],
-  },
-];
+import { getFallbackNightPrayer } from '@/lib/liturgy/fallback';
 
 export default function NightScreen() {
-  const nightScripture = getTodayNightScripture();
   const { saveSession } = useStorage();
   const [completed, setCompleted] = useState(false);
+
+  // Get tonight's Liturgy of the Hours content
+  const nightPrayer = getFallbackNightPrayer(new Date());
 
   const handleComplete = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await saveSession({
       practice: 'night',
-      duration: 5,
+      duration: 10,
       date: new Date().toISOString().split('T')[0],
     });
     setCompleted(true);
@@ -64,110 +30,157 @@ export default function NightScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Light status bar for dark background */}
       <StatusBar style="light" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
+        {/* Night Prayer Header Card */}
         <AnimatedEntrance delay={0}>
-        <View style={styles.header}>
-          <View style={styles.iconContainer}>
-            <Moon size={24} color={colors.night.gold} strokeWidth={1.5} />
+          <View style={styles.headerCard}>
+            <Image
+              source={require('@/assets/peace-in-his-presence.png')}
+              style={styles.headerImage}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['rgba(20,20,30,0.3)', 'rgba(20,20,30,0.9)']}
+              style={styles.headerOverlay}
+            >
+              <Text style={styles.headerLabel}>LITURGY OF THE HOURS</Text>
+              <Text style={styles.headerTitle}>NIGHT</Text>
+              <Text style={styles.headerSubtitle}>— Prayer —</Text>
+              <Text style={styles.headerTitle}>COMPLINE</Text>
+            </LinearGradient>
           </View>
-          <Text style={styles.label}>THE EXAMEN</Text>
-          <Text style={styles.title}>Evening Reflection</Text>
-        </View>
         </AnimatedEntrance>
 
-        {/* Opening Scripture */}
+        {/* Liturgy Content - Seamless dark panel */}
         <AnimatedEntrance delay={100}>
-        <View style={styles.scriptureCard}>
-          <View style={styles.goldAccent} />
-          <View style={styles.scriptureContent}>
-            <Text style={styles.scriptureText}>"{nightScripture.text}"</Text>
-            <Text style={styles.scriptureRef}>— {nightScripture.reference}</Text>
-          </View>
-        </View>
-        </AnimatedEntrance>
-
-        {/* Examen Sections */}
-        {EXAMEN_SECTIONS.map((section, index) => {
-          const Icon = section.icon;
-          return (
-            <AnimatedEntrance key={section.id} delay={200 + index * 100}>
-            <View style={styles.examSection}>
+          <View style={styles.liturgyPanel}>
+            {/* Psalm */}
+            <View style={styles.liturgySection}>
               <View style={styles.sectionHeader}>
-                <View style={styles.sectionIcon}>
-                  <Icon size={20} color={colors.night.gold} strokeWidth={1.5} />
-                </View>
-                <View style={styles.sectionTitleContainer}>
-                  <Text style={styles.sectionTitle}>{section.title}</Text>
-                  <Text style={styles.sectionSubtitle}>{section.subtitle}</Text>
-                </View>
-                <Text style={styles.sectionNumber}>{index + 1}</Text>
-              </View>
-
-              <View style={styles.promptsContainer}>
-                {section.prompts.map((prompt, promptIndex) => (
-                  <View key={promptIndex} style={styles.promptItem}>
-                    <View style={styles.promptDot} />
-                    <Text style={styles.promptText}>{prompt}</Text>
+                <View style={[styles.sectionAccent, { backgroundColor: '#1A365D' }]} />
+                <View style={styles.sectionHeaderContent}>
+                  <View style={styles.sectionTitleRow}>
+                    <BookOpen size={16} color="#7BA3D4" strokeWidth={2} />
+                    <Text style={styles.sectionNumber}>01</Text>
                   </View>
-                ))}
+                  <Text style={[styles.sectionTitle, { color: '#7BA3D4' }]}>Psalmody</Text>
+                  <Text style={styles.sectionSubtitle}>{nightPrayer.psalm.reference}</Text>
+                </View>
               </View>
-
-              {/* Pause indicator */}
-              <View style={styles.pauseContainer}>
-                <View style={styles.pauseLine} />
-                <Text style={styles.pauseText}>pause • reflect • release</Text>
-                <View style={styles.pauseLine} />
+              <View style={styles.sectionBody}>
+                <Text style={styles.antiphon}>{nightPrayer.psalm.antiphon}</Text>
+                <Text style={styles.liturgyText}>{nightPrayer.psalm.text}</Text>
               </View>
             </View>
-            </AnimatedEntrance>
-          );
-        })}
 
-        {/* Closing */}
-        <AnimatedEntrance delay={500}>
-        <View style={styles.closingSection}>
-          <Text style={styles.closingLabel}>CLOSING PRAYER</Text>
-          <Text style={styles.closingText}>
-            Lord, I surrender this day to You.{'\n'}
-            Take what was broken and make it whole.{'\n'}
-            Take what was good and multiply it.{'\n'}
-            Grant me peaceful rest,{'\n'}
-            that I may rise to serve You again.{'\n'}
-            Amen.
-          </Text>
-        </View>
-        </AnimatedEntrance>
-
-        {/* Rest Message */}
-        <AnimatedEntrance delay={600}>
-        <View style={styles.restMessage}>
-          <Moon size={18} color={colors.night.gold} strokeWidth={1.5} />
-          <Text style={styles.restText}>Rest well. God holds your tomorrow.</Text>
-        </View>
-        </AnimatedEntrance>
-
-        {/* Complete Night Prayer Button */}
-        <AnimatedEntrance delay={700}>
-        {!completed ? (
-          <NightButton onPress={handleComplete}>
-            Complete Night Prayer
-          </NightButton>
-        ) : (
-          <View style={styles.completedState}>
-            <View style={styles.completedIcon}>
-              <Check size={24} color={colors.night.background} strokeWidth={3} />
+            {/* Reading */}
+            <View style={styles.liturgySection}>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionAccent, { backgroundColor: '#B8860B' }]} />
+                <View style={styles.sectionHeaderContent}>
+                  <View style={styles.sectionTitleRow}>
+                    <BookOpen size={16} color="#D4AF37" strokeWidth={2} />
+                    <Text style={styles.sectionNumber}>02</Text>
+                  </View>
+                  <Text style={[styles.sectionTitle, { color: '#D4AF37' }]}>Reading</Text>
+                  <Text style={styles.sectionSubtitle}>{nightPrayer.reading.reference}</Text>
+                </View>
+              </View>
+              <View style={styles.sectionBody}>
+                <Text style={styles.liturgyText}>{nightPrayer.reading.text}</Text>
+              </View>
             </View>
-            <Text style={styles.completedText}>Night Prayer Complete</Text>
-            <Text style={styles.completedSubtext}>May your rest be peaceful</Text>
+
+            {/* Responsory */}
+            <View style={styles.liturgySection}>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionAccent, { backgroundColor: '#4A5568' }]} />
+                <View style={styles.sectionHeaderContent}>
+                  <View style={styles.sectionTitleRow}>
+                    <Moon size={16} color="#A0AEC0" strokeWidth={2} />
+                    <Text style={styles.sectionNumber}>03</Text>
+                  </View>
+                  <Text style={[styles.sectionTitle, { color: '#A0AEC0' }]}>Responsory</Text>
+                </View>
+              </View>
+              <View style={styles.sectionBody}>
+                <View style={styles.responsoryRow}>
+                  <Text style={styles.responsoryLabel}>V.</Text>
+                  <Text style={styles.responsoryText}>{nightPrayer.responsory.versicle}</Text>
+                </View>
+                <View style={styles.responsoryRow}>
+                  <Text style={styles.responsoryLabel}>R.</Text>
+                  <Text style={styles.responsoryText}>{nightPrayer.responsory.response}</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Canticle of Simeon */}
+            <View style={styles.liturgySection}>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionAccent, { backgroundColor: '#553C9A' }]} />
+                <View style={styles.sectionHeaderContent}>
+                  <View style={styles.sectionTitleRow}>
+                    <Heart size={16} color="#B794F4" strokeWidth={2} />
+                    <Text style={styles.sectionNumber}>04</Text>
+                  </View>
+                  <Text style={[styles.sectionTitle, { color: '#B794F4' }]}>Nunc Dimittis</Text>
+                  <Text style={styles.sectionSubtitle}>Canticle of Simeon</Text>
+                </View>
+              </View>
+              <View style={styles.sectionBody}>
+                <Text style={styles.antiphon}>{nightPrayer.canticleOfSimeon.antiphon}</Text>
+                <Text style={styles.liturgyText}>{nightPrayer.canticleOfSimeon.text}</Text>
+              </View>
+            </View>
+
+            {/* Closing Prayer */}
+            <View style={[styles.liturgySection, { borderBottomWidth: 0 }]}>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionAccent, { backgroundColor: '#744210' }]} />
+                <View style={styles.sectionHeaderContent}>
+                  <View style={styles.sectionTitleRow}>
+                    <Moon size={16} color={colors.night.gold} strokeWidth={2} />
+                    <Text style={styles.sectionNumber}>05</Text>
+                  </View>
+                  <Text style={[styles.sectionTitle, { color: colors.night.gold }]}>Closing Prayer</Text>
+                </View>
+              </View>
+              <View style={styles.sectionBody}>
+                <Text style={styles.liturgyText}>{nightPrayer.closingPrayer}</Text>
+              </View>
+            </View>
           </View>
-        )}
+        </AnimatedEntrance>
+
+        {/* Marian Antiphon */}
+        <AnimatedEntrance delay={150}>
+          <View style={styles.marianCard}>
+            <Text style={styles.marianLabel}>{nightPrayer.marianAntiphon.name.toUpperCase()}</Text>
+            <Text style={styles.marianText}>{nightPrayer.marianAntiphon.text}</Text>
+          </View>
+        </AnimatedEntrance>
+
+        {/* Complete Button */}
+        <AnimatedEntrance delay={200}>
+          {!completed ? (
+            <NightButton onPress={handleComplete}>
+              Complete Night Prayer
+            </NightButton>
+          ) : (
+            <View style={styles.completedState}>
+              <View style={styles.completedIcon}>
+                <Check size={24} color={colors.night.background} strokeWidth={3} />
+              </View>
+              <Text style={styles.completedText}>Night Prayer Complete</Text>
+              <Text style={styles.completedSubtext}>May your rest be peaceful</Text>
+            </View>
+          )}
         </AnimatedEntrance>
 
         <View style={styles.bottomSpacer} />
@@ -186,219 +199,176 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.lg,
-    paddingTop: spacing.xl,
+    paddingTop: spacing.md,
+    gap: spacing.lg,
   },
 
-  // Header
-  header: {
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-  },
-  iconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.night.goldFaint,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.md,
-  },
-  label: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 1.5,
-    color: colors.night.gold,
-    marginBottom: spacing.xs,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '300',
-    color: colors.night.text,
-    fontFamily: 'Georgia',
-  },
-
-  // Scripture Card
-  scriptureCard: {
-    backgroundColor: colors.night.surface,
-    borderRadius: radius.lg,
+  // Header Card with Image
+  headerCard: {
+    height: 200,
+    borderRadius: radius.xl,
     overflow: 'hidden',
-    marginBottom: spacing.xl,
-    flexDirection: 'row',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
-  goldAccent: {
-    width: 4,
-    backgroundColor: colors.night.gold,
+  headerImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
   },
-  scriptureContent: {
-    flex: 1,
-    padding: spacing.lg,
+  headerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+    padding: spacing.xl,
   },
-  scriptureText: {
-    fontFamily: 'Georgia',
-    fontSize: 18,
-    fontStyle: 'italic',
-    lineHeight: 28,
-    color: colors.night.text,
+  headerLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 2,
+    color: 'rgba(255,255,255,0.7)',
     marginBottom: spacing.sm,
   },
-  scriptureRef: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.night.gold,
-    textAlign: 'right',
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '300',
+    color: '#FFFFFF',
+    fontFamily: 'Georgia',
+    letterSpacing: 2,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    color: 'rgba(255,255,255,0.85)',
+    fontFamily: 'Georgia',
+    marginVertical: -2,
   },
 
-  // Examen Sections
-  examSection: {
-    marginBottom: spacing.xl,
+  // Liturgy Panel - Seamless dark
+  liturgyPanel: {
+    marginTop: -radius.xl - 1,
+    backgroundColor: colors.night.surface,
+    borderBottomLeftRadius: radius.xl,
+    borderBottomRightRadius: radius.xl,
+    overflow: 'hidden',
+  },
+
+  // Liturgy Section
+  liturgySection: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.06)',
   },
   sectionHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.md,
   },
-  sectionIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.night.goldFaint,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
+  sectionAccent: {
+    width: 4,
   },
-  sectionTitleContainer: {
+  sectionHeaderContent: {
     flex: 1,
+    paddingTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.sm,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  sectionNumber: {
+    fontSize: 20,
+    fontWeight: '200',
+    color: 'rgba(255,255,255,0.15)',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.night.text,
+    letterSpacing: 0.5,
+    marginBottom: 2,
   },
   sectionSubtitle: {
-    fontSize: 13,
-    color: colors.night.textSecondary,
-    marginTop: 2,
+    fontSize: 12,
+    fontStyle: 'italic',
+    color: 'rgba(255,255,255,0.5)',
   },
-  sectionNumber: {
-    fontSize: 28,
-    fontWeight: '200',
-    color: colors.night.gold,
-    opacity: 0.4,
-  },
-  promptsContainer: {
-    backgroundColor: colors.night.surface,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  promptItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-  },
-  promptDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.night.gold,
-    opacity: 0.5,
-    marginRight: spacing.md,
-  },
-  promptText: {
-    fontSize: 15,
-    color: colors.night.textSecondary,
-    flex: 1,
-    lineHeight: 22,
-  },
-  pauseContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: spacing.lg,
-    paddingHorizontal: spacing.md,
-  },
-  pauseLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.night.surfaceBorder,
-  },
-  pauseText: {
-    fontSize: 10,
-    color: colors.night.gold,
-    opacity: 0.5,
-    letterSpacing: 1.5,
-    marginHorizontal: spacing.md,
-    textTransform: 'uppercase',
+  sectionBody: {
+    paddingLeft: 4 + spacing.lg,
+    paddingRight: spacing.lg,
+    paddingBottom: spacing.lg,
   },
 
-  // Closing Section
-  closingSection: {
+  // Liturgy Text Styles
+  antiphon: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    color: colors.night.gold,
+    marginBottom: spacing.sm,
+    lineHeight: 22,
+  },
+  liturgyText: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: 'rgba(255,255,255,0.8)',
+    fontFamily: 'Georgia',
+  },
+
+  // Responsory
+  responsoryRow: {
+    flexDirection: 'row',
+    marginBottom: spacing.sm,
+  },
+  responsoryLabel: {
+    width: 24,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.night.gold,
+  },
+  responsoryText: {
+    flex: 1,
+    fontSize: 15,
+    lineHeight: 22,
+    color: 'rgba(255,255,255,0.8)',
+    fontStyle: 'italic',
+  },
+
+  // Marian Antiphon Card
+  marianCard: {
     backgroundColor: colors.night.surface,
     borderRadius: radius.lg,
     padding: spacing.xl,
-    alignItems: 'center',
-    marginBottom: spacing.xl,
     borderWidth: 1,
-    borderColor: colors.night.surfaceBorder,
+    borderColor: colors.night.goldFaint,
   },
-  closingLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 1.5,
+  marianLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 2,
     color: colors.night.gold,
+    textAlign: 'center',
     marginBottom: spacing.md,
   },
-  closingText: {
-    fontFamily: 'Georgia',
-    fontSize: 15,
-    fontStyle: 'italic',
-    lineHeight: 26,
-    color: colors.night.text,
-    textAlign: 'center',
-  },
-
-  // Rest Message
-  restMessage: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.lg,
-    marginBottom: spacing.lg,
-  },
-  restText: {
+  marianText: {
     fontSize: 14,
-    color: colors.night.textSecondary,
+    lineHeight: 24,
+    color: 'rgba(255,255,255,0.7)',
+    fontFamily: 'Georgia',
     fontStyle: 'italic',
-  },
-
-  // Complete Button - Soft gold glow on dark
-  completeButton: {
-    backgroundColor: colors.night.gold,
-    borderRadius: radius.md,
-    paddingVertical: 18,
-    paddingHorizontal: spacing.xl,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-    // Soft glow effect
-    shadowColor: colors.night.gold,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  completeButtonText: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: colors.night.background,
-    letterSpacing: 0.3,
+    textAlign: 'center',
   },
 
   // Completed State
   completedState: {
     alignItems: 'center',
     paddingVertical: spacing.xl,
-    marginBottom: spacing.lg,
   },
   completedIcon: {
     width: 64,
