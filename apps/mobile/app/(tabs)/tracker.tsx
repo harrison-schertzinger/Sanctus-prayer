@@ -1,59 +1,87 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Text, Image, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Check } from 'lucide-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
 import { colors, spacing, radius } from '@/lib/colors';
 import { useStorage } from '@/hooks/useStorage';
 import { useTrackerStats } from '@/hooks/useTrackerStats';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
+import { PressableScale } from '@/components/ui/PressableScale';
 import { KPIBar } from '@/components/ui/KPIBar';
+
+const CHECKLIST_STORAGE_KEY = '@sanctus/daily_checklist';
 
 // 40-day journey configuration
 const TOTAL_DAYS = 40;
 
 // Daily checklist items
 const CHECKLIST_ITEMS = [
-  { id: 'morning-reading', label: 'Morning Reading', practice: 'reading' },
-  { id: 'sacred-center', label: 'Sacred Center', practice: 'peace' },
-  { id: 'divine-rhythm', label: 'Divine Rhythm', practice: 'breath' },
-  { id: 'night-prayer', label: 'Night Prayer', practice: 'night' },
+  { id: 'morning-reading', label: 'Morning Reading' },
+  { id: 'sacred-center', label: 'Sacred Center' },
+  { id: 'divine-rhythm', label: 'Divine Rhythm' },
+  { id: 'night-prayer', label: 'Night Prayer' },
 ];
 
-export default function TrackerScreen() {
-  const { sessions, completedReadings } = useStorage();
-  const stats = useTrackerStats(sessions);
+interface DailyChecklist {
+  date: string;
+  items: Record<string, boolean>;
+}
 
-  // Calculate current day in the 40-day journey
-  const currentDay = Math.min(stats.totalSessions + 1, TOTAL_DAYS);
+export default function TrackerScreen() {
+  const { sessions } = useStorage();
+  const stats = useTrackerStats(sessions);
+  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
 
   // Get today's date string
   const today = new Date().toISOString().split('T')[0];
 
-  // Check which items are completed today
-  const getTodayCompletions = () => {
-    const todaySessions = sessions.filter(s => s.date === today);
-    const completions: Record<string, boolean> = {};
+  // Calculate current day in the 40-day journey
+  const currentDay = Math.min(stats.totalSessions + 1, TOTAL_DAYS);
 
-    // Check readings
-    completions['morning-reading'] = completedReadings.some(r => r.includes(today));
+  // Load checklist from storage on mount
+  useEffect(() => {
+    loadChecklist();
+  }, []);
 
-    // Check practices
-    CHECKLIST_ITEMS.forEach(item => {
-      if (item.practice !== 'reading') {
-        completions[item.id] = todaySessions.some(s =>
-          s.practice === item.practice ||
-          (item.practice === 'night' && s.practice === 'night')
-        );
+  const loadChecklist = async () => {
+    try {
+      const stored = await AsyncStorage.getItem(CHECKLIST_STORAGE_KEY);
+      if (stored) {
+        const data: DailyChecklist = JSON.parse(stored);
+        // Only use stored data if it's from today
+        if (data.date === today) {
+          setChecklist(data.items);
+        } else {
+          // New day, reset checklist
+          setChecklist({});
+        }
       }
-    });
-
-    return completions;
+    } catch (error) {
+      __DEV__ && console.error('Error loading checklist:', error);
+    }
   };
 
-  const todayCompletions = getTodayCompletions();
-  const completedToday = Object.values(todayCompletions).filter(Boolean).length;
+  const saveChecklist = async (items: Record<string, boolean>) => {
+    try {
+      const data: DailyChecklist = { date: today, items };
+      await AsyncStorage.setItem(CHECKLIST_STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      __DEV__ && console.error('Error saving checklist:', error);
+    }
+  };
+
+  const toggleItem = (itemId: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const updated = { ...checklist, [itemId]: !checklist[itemId] };
+    setChecklist(updated);
+    saveChecklist(updated);
+  };
+
+  const completedToday = Object.values(checklist).filter(Boolean).length;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -136,28 +164,34 @@ export default function TrackerScreen() {
           <View style={styles.checklistPanel}>
             <Text style={styles.checklistTitle}>TODAY'S RHYTHM</Text>
             {CHECKLIST_ITEMS.map((item, index) => (
-              <View
+              <PressableScale
                 key={item.id}
-                style={[
-                  styles.checklistItem,
-                  index < CHECKLIST_ITEMS.length - 1 && styles.checklistItemBorder
-                ]}
+                onPress={() => toggleItem(item.id)}
+                haptic="none"
+                scaleValue={0.98}
               >
-                <View style={[
-                  styles.checkbox,
-                  todayCompletions[item.id] && styles.checkboxChecked
-                ]}>
-                  {todayCompletions[item.id] && (
-                    <Check size={14} color="#FFFFFF" strokeWidth={3} />
-                  )}
+                <View
+                  style={[
+                    styles.checklistItem,
+                    index < CHECKLIST_ITEMS.length - 1 && styles.checklistItemBorder
+                  ]}
+                >
+                  <View style={[
+                    styles.checkbox,
+                    checklist[item.id] && styles.checkboxChecked
+                  ]}>
+                    {checklist[item.id] && (
+                      <Check size={14} color="#FFFFFF" strokeWidth={3} />
+                    )}
+                  </View>
+                  <Text style={[
+                    styles.checklistLabel,
+                    checklist[item.id] && styles.checklistLabelChecked
+                  ]}>
+                    {item.label}
+                  </Text>
                 </View>
-                <Text style={[
-                  styles.checklistLabel,
-                  todayCompletions[item.id] && styles.checklistLabelChecked
-                ]}>
-                  {item.label}
-                </Text>
-              </View>
+              </PressableScale>
             ))}
           </View>
         </AnimatedEntrance>

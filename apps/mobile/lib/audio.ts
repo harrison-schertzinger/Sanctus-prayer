@@ -37,9 +37,9 @@ export async function initializeAudio(): Promise<void> {
       staysActiveInBackground: false,
       shouldDuckAndroid: true,
     });
-    console.log('🔊 Audio initialized');
+    if (__DEV__) console.log('🔊 Audio initialized');
   } catch (error) {
-    console.warn('Failed to initialize audio:', error);
+    if (__DEV__) console.warn('Failed to initialize audio:', error);
   }
 }
 
@@ -51,9 +51,9 @@ export async function initializeAudio(): Promise<void> {
 export async function playSound(soundName: SoundName, volume: number = 0.8): Promise<void> {
   const soundFile = soundFiles[soundName];
 
-  // Placeholder mode - just log
+  // Placeholder mode - just log in dev
   if (soundFile === null) {
-    console.log(`🔔 [Audio Placeholder] Playing: ${soundName}`);
+    if (__DEV__) console.log(`🔔 [Audio Placeholder] Playing: ${soundName}`);
     return;
   }
 
@@ -76,7 +76,7 @@ export async function playSound(soundName: SoundName, volume: number = 0.8): Pro
     await sound.setVolumeAsync(volume);
     await sound.playAsync();
   } catch (error) {
-    console.warn(`Failed to play sound "${soundName}":`, error);
+    if (__DEV__) console.warn(`Failed to play sound "${soundName}":`, error);
   }
 }
 
@@ -84,7 +84,7 @@ export async function playSound(soundName: SoundName, volume: number = 0.8): Pro
  * Stop all currently playing sounds
  */
 export async function stopAllSounds(): Promise<void> {
-  console.log('🔇 [Audio] Stopping all sounds');
+  if (__DEV__) console.log('🔇 [Audio] Stopping all sounds');
 
   for (const soundName of Object.keys(loadedSounds) as SoundName[]) {
     const sound = loadedSounds[soundName];
@@ -103,7 +103,7 @@ export async function stopAllSounds(): Promise<void> {
  * Call this when leaving practice screens
  */
 export async function unloadAllSounds(): Promise<void> {
-  console.log('🔇 [Audio] Unloading all sounds');
+  if (__DEV__) console.log('🔇 [Audio] Unloading all sounds');
 
   for (const soundName of Object.keys(loadedSounds) as SoundName[]) {
     const sound = loadedSounds[soundName];

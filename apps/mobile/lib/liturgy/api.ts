@@ -22,7 +22,7 @@ export async function fetchDailyReadings(date: Date = new Date()): Promise<Daily
       return readings;
     }
   } catch (error) {
-    console.log('API fetch failed, using fallback:', error);
+    if (__DEV__) console.log('API fetch failed, using fallback:', error);
   }
 
   // Fallback to local content
@@ -68,7 +68,7 @@ async function fetchFromEvangelizo(dateStr: string): Promise<DailyMassReadings |
     const data = await response.json();
     return parseEvangelizoResponse(data, dateStr);
   } catch (error) {
-    console.log('Evangelizo API error:', error);
+    if (__DEV__) console.log('Evangelizo API error:', error);
     return null;
   }
 }
@@ -131,7 +131,7 @@ function parseEvangelizoResponse(data: any, dateStr: string): DailyMassReadings 
       } : undefined,
     };
   } catch (error) {
-    console.log('Error parsing Evangelizo response:', error);
+    if (__DEV__) console.log('Error parsing Evangelizo response:', error);
     return null;
   }
 }

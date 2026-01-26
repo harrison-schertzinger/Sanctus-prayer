@@ -101,18 +101,28 @@ export default function PrayerScreen() {
         <AnimatedEntrance delay={50}>
           <PressableScale scaleValue={0.98} haptic="light" onPress={toggleExpanded}>
             <View style={styles.practiceCard}>
-              {/* Cover Image */}
+              {/* Cover Image - cropped to show hands, less sky */}
               <Image
                 source={require('@/assets/peace-in-his-presence.png')}
                 style={styles.practiceImage}
                 resizeMode="cover"
               />
+
+              {/* Top row: Label + Day Badge inline */}
+              <View style={styles.topRow}>
+                <Text style={styles.practiceLabel}>SANCTUS TRAINING</Text>
+                <View style={styles.dayBadge}>
+                  <Text style={styles.dayBadgeText}>
+                    Day {practice.currentDay} of {practice.totalDays}
+                  </Text>
+                </View>
+              </View>
+
               {/* Gradient overlay for text legibility */}
               <LinearGradient
-                colors={['transparent', 'rgba(0,0,0,0.75)']}
+                colors={['transparent', 'rgba(0,0,0,0.8)']}
                 style={styles.imageOverlay}
               >
-                <Text style={styles.practiceLabel}>SANCTUS TRAINING</Text>
                 <Text style={styles.practiceTitle}>PEACE</Text>
                 <Text style={styles.practiceSubtitle}>— in His —</Text>
                 <Text style={styles.practiceTitle}>PRESENCE</Text>
@@ -123,17 +133,10 @@ export default function PrayerScreen() {
                     {expanded ? 'Tap to collapse' : 'Tap for details'}
                   </Text>
                   <Animated.View style={chevronStyle}>
-                    <ChevronDown size={16} color="rgba(255,255,255,0.7)" strokeWidth={2} />
+                    <ChevronDown size={14} color="rgba(255,255,255,0.6)" strokeWidth={2} />
                   </Animated.View>
                 </View>
               </LinearGradient>
-
-              {/* Day badge */}
-              <View style={styles.dayBadge}>
-                <Text style={styles.dayBadgeText}>
-                  Day {practice.currentDay} of {practice.totalDays}
-                </Text>
-              </View>
             </View>
           </PressableScale>
 
@@ -267,13 +270,13 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.lg,
-    paddingTop: spacing.md,
-    gap: spacing.lg,
+    paddingTop: spacing.sm,
+    gap: spacing.md,
   },
 
-  // Practice Card with Image
+  // Practice Card with Image - Compact height
   practiceCard: {
-    height: 240,
+    height: 156,
     borderRadius: radius.xl,
     overflow: 'hidden',
     backgroundColor: colors.surface,
@@ -292,45 +295,53 @@ const styles = StyleSheet.create({
   practiceImage: {
     ...StyleSheet.absoluteFillObject,
     width: '100%',
-    height: '100%',
+    height: '150%', // Oversized to allow cropping
+    top: '-25%',    // Shift up to show hands, crop sky
+  },
+  topRow: {
+    position: 'absolute',
+    top: spacing.md,
+    left: spacing.md,
+    right: spacing.md,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    zIndex: 10,
   },
   imageOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
-    padding: spacing.xl,
+    padding: spacing.md,
+    paddingBottom: spacing.sm,
   },
   practiceLabel: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '700',
-    letterSpacing: 2,
-    color: 'rgba(255,255,255,0.7)',
-    marginBottom: spacing.sm,
+    letterSpacing: 1.5,
+    color: 'rgba(255,255,255,0.8)',
   },
   practiceTitle: {
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: '300',
     color: '#FFFFFF',
     fontFamily: 'Georgia',
-    letterSpacing: 2,
+    letterSpacing: 1.5,
   },
   practiceSubtitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontStyle: 'italic',
     color: 'rgba(255,255,255,0.85)',
     fontFamily: 'Georgia',
-    marginVertical: -4,
+    marginVertical: -2,
   },
   dayBadge: {
-    position: 'absolute',
-    top: spacing.lg,
-    right: spacing.lg,
     backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: radius.full,
   },
   dayBadgeText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     color: '#FFFFFF',
   },
@@ -340,12 +351,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: spacing.lg,
+    marginTop: spacing.sm,
     gap: spacing.xs,
   },
   expandText: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.6)',
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.5)',
     letterSpacing: 0.5,
   },
 
@@ -462,7 +473,7 @@ const styles = StyleSheet.create({
   // Timer Section
   timerSection: {
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   timerContainer: {
     // Circles sit below the stats bar
