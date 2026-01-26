@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { colors } from '@/lib/colors';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -22,7 +23,7 @@ export default function RootLayout() {
     // Request notification permissions on app launch
     const requestPermissions = async () => {
       const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') {
+      if (status !== 'granted' && __DEV__) {
         console.log('Notification permissions not granted');
       }
     };
@@ -30,17 +31,19 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      {/* Dark status bar for light backgrounds */}
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.background },
-          animation: 'fade',
-        }}
-      />
-    </GestureHandlerRootView>
+    <AuthProvider>
+      <GestureHandlerRootView style={styles.container}>
+        {/* Dark status bar for light backgrounds */}
+        <StatusBar style="dark" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.background },
+            animation: 'fade',
+          }}
+        />
+      </GestureHandlerRootView>
+    </AuthProvider>
   );
 }
 

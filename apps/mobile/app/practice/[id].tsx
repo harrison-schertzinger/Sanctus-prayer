@@ -39,8 +39,8 @@ export default function PracticeScreen() {
   } = usePracticeTimer({
     practiceId,
     duration,
-    onPhaseChange: (phase) => {
-      console.log('Phase changed to:', phase);
+    onPhaseChange: (_phase) => {
+      // Phase change handled - audio/haptic feedback in timer hook
     },
     onComplete: () => {
       // Generate completion message
