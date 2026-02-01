@@ -3,7 +3,7 @@
  * Welcomes them to Day 1 of their 40-day journey
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,6 +14,8 @@ import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { colors, spacing, radius } from '@/lib/design';
+import { useNotifications } from '@/hooks/useNotifications';
+import { getExperienceMode } from '@/lib/experienceMode';
 
 const { width } = Dimensions.get('window');
 
@@ -50,6 +52,8 @@ export default function JourneyStartScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { user, updateProfile } = useAuth();
+  const { initializeAfterOnboarding } = useNotifications();
+  const [showRemindersToast, setShowRemindersToast] = useState(false);
 
   // Set journey start date when this screen mounts
   useEffect(() => {
@@ -60,6 +64,15 @@ export default function JourneyStartScreen() {
           journey_start_date: today,
           current_journey_day: 1,
         });
+      }
+
+      // Initialize notifications for app_only users
+      const mode = await getExperienceMode();
+      if (mode === 'app_only') {
+        await initializeAfterOnboarding();
+        setShowRemindersToast(true);
+        // Hide toast after 3 seconds
+        setTimeout(() => setShowRemindersToast(false), 3000);
       }
     };
     initializeJourney();
@@ -144,6 +157,13 @@ export default function JourneyStartScreen() {
           </GradientButton>
         </AnimatedEntrance>
       </View>
+
+      {/* Reminders Toast */}
+      {showRemindersToast && (
+        <View style={[styles.toast, { bottom: insets.bottom + 100 }]}>
+          <Text style={styles.toastText}>Mindfulness reminders enabled</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -268,5 +288,20 @@ const styles = StyleSheet.create({
   },
   enterButton: {
     width: '100%',
+  },
+  toast: {
+    position: 'absolute',
+    left: spacing.xl,
+    right: spacing.xl,
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+  },
+  toastText: {
+    color: colors.textInverse,
+    fontSize: 14,
+    fontWeight: '500',
   },
 });

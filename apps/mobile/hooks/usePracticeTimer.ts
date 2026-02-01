@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import * as Haptics from 'expo-haptics';
 import {
   PracticePhaseType,
   BreathPhase,
@@ -10,6 +9,11 @@ import {
 } from '@/lib/types';
 import { practices } from '@/lib/content';
 import { sounds } from '@/lib/audio';
+import {
+  startBreathHaptics,
+  stopBreathHaptics,
+  hapticEvents,
+} from '@/lib/haptics';
 
 interface TimerState {
   // Current phase
@@ -104,22 +108,27 @@ export function usePracticeTimer({
     return pattern.inhale + pattern.hold + pattern.exhale;
   }, [getCurrentBreathPattern]);
 
-  // Trigger haptic feedback
-  const triggerHaptic = useCallback(
-    (type: 'light' | 'medium' | 'heavy' = 'light') => {
+  // Trigger breath haptic pattern for current phase
+  const triggerBreathHaptics = useCallback(
+    (breathPhase: BreathPhase, breathPattern: BreathPattern) => {
       if (!hapticEnabled) return;
 
-      switch (type) {
-        case 'light':
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      // Get duration in milliseconds for this breath phase
+      let durationMs: number;
+      switch (breathPhase) {
+        case 'inhale':
+          durationMs = breathPattern.inhale * 1000;
           break;
-        case 'medium':
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        case 'hold':
+          durationMs = breathPattern.hold * 1000;
           break;
-        case 'heavy':
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        case 'exhale':
+          durationMs = breathPattern.exhale * 1000;
           break;
       }
+
+      // Start the rhythmic haptic pattern
+      startBreathHaptics(breathPhase, durationMs);
     },
     [hapticEnabled]
   );
@@ -144,7 +153,8 @@ export function usePracticeTimer({
         intervalRef.current = null;
       }
 
-      triggerHaptic('heavy');
+      stopBreathHaptics();
+      if (hapticEnabled) hapticEvents.completion();
       sounds.completion();
       onComplete?.();
       return;
@@ -207,14 +217,14 @@ export function usePracticeTimer({
     setState((prev) => {
       // Check for phase change
       if (prev.phase !== phase) {
-        triggerHaptic('medium');
+        if (hapticEnabled) hapticEvents.transition();
         sounds.transition();
         onPhaseChange?.(phase);
       }
 
-      // Check for breath phase change
+      // Check for breath phase change - trigger rhythmic haptic pattern
       if (prev.breathPhase !== breathPhase) {
-        triggerHaptic('light');
+        triggerBreathHaptics(breathPhase, breathPattern);
         onBreathChange?.(breathPhase);
       }
 
@@ -234,7 +244,8 @@ export function usePracticeTimer({
     totalSeconds,
     phaseDurations,
     practice,
-    triggerHaptic,
+    hapticEnabled,
+    triggerBreathHaptics,
     onPhaseChange,
     onBreathChange,
     onComplete,
@@ -248,11 +259,15 @@ export function usePracticeTimer({
 
     setState((prev) => ({ ...prev, isRunning: true, isPaused: false }));
 
-    triggerHaptic('medium');
+    if (hapticEnabled) hapticEvents.transition();
     sounds.gong();
 
+    // Start initial breath haptics (inhale)
+    const initialPattern = practice.phases.recollection.breathPattern;
+    triggerBreathHaptics('inhale', initialPattern);
+
     intervalRef.current = setInterval(updateTimer, 50); // 20fps for smooth animations
-  }, [state.isRunning, updateTimer, triggerHaptic]);
+  }, [state.isRunning, updateTimer, hapticEnabled, practice, triggerBreathHaptics]);
 
   // Pause the timer
   const pause = useCallback(() => {
@@ -265,9 +280,10 @@ export function usePracticeTimer({
       intervalRef.current = null;
     }
 
+    stopBreathHaptics();
     setState((prev) => ({ ...prev, isRunning: false, isPaused: true }));
-    triggerHaptic('light');
-  }, [state.isRunning, state.elapsedSeconds, triggerHaptic]);
+    if (hapticEnabled) hapticEvents.tap();
+  }, [state.isRunning, state.elapsedSeconds, hapticEnabled]);
 
   // Resume the timer
   const resume = useCallback(() => {
@@ -282,6 +298,7 @@ export function usePracticeTimer({
       intervalRef.current = null;
     }
 
+    stopBreathHaptics();
     pausedTimeRef.current = 0;
     startTimeRef.current = 0;
 
@@ -307,6 +324,7 @@ export function usePracticeTimer({
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
+      stopBreathHaptics();
     };
   }, []);
 

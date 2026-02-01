@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -7,7 +6,8 @@ import * as Notifications from 'expo-notifications';
 import { colors } from '@/lib/colors';
 import { AuthProvider } from '@/contexts/AuthContext';
 
-// Configure notifications
+// Configure notifications handler
+// Permissions are requested after onboarding in journey-start.tsx
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -19,21 +19,9 @@ Notifications.setNotificationHandler({
 });
 
 export default function RootLayout() {
-  useEffect(() => {
-    // Request notification permissions on app launch
-    const requestPermissions = async () => {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted' && __DEV__) {
-        console.log('Notification permissions not granted');
-      }
-    };
-    requestPermissions();
-  }, []);
-
   return (
-    <AuthProvider>
-      <GestureHandlerRootView style={styles.container}>
-        {/* Dark status bar for light backgrounds */}
+    <GestureHandlerRootView style={styles.container}>
+      <AuthProvider>
         <StatusBar style="dark" />
         <Stack
           screenOptions={{
@@ -42,8 +30,8 @@ export default function RootLayout() {
             animation: 'fade',
           }}
         />
-      </GestureHandlerRootView>
-    </AuthProvider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
 

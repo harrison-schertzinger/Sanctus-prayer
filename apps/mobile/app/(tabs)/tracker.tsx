@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Text, Image, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Image, Platform, LayoutAnimation, UIManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Check } from 'lucide-react-native';
+import { Check, ChevronDown, Target, Compass, Heart, Hand } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { colors, spacing, radius } from '@/lib/colors';
@@ -12,6 +12,51 @@ import { useTrackerStats } from '@/hooks/useTrackerStats';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { PressableScale } from '@/components/ui/PressableScale';
 import { KPIBar } from '@/components/ui/KPIBar';
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+// Divine Rhythm - The 4 R's
+const DIVINE_RHYTHM_STEPS = [
+  {
+    step: 1,
+    name: 'Recenter',
+    duration: '2-3 breaths',
+    instruction: 'Stop. Breathe. Become present to this moment.',
+    question: 'Where am I? What am I feeling?',
+    color: '#1B3A57',
+    Icon: Target,
+  },
+  {
+    step: 2,
+    name: 'Realign',
+    duration: '1 breath',
+    instruction: 'Turn your attention to God. Remember His presence.',
+    prayer: 'You are here. I am Yours.',
+    color: '#B8860B',
+    Icon: Compass,
+  },
+  {
+    step: 3,
+    name: 'Recommit',
+    duration: '1 breath',
+    instruction: 'Renew your intention. Release what pulls you away.',
+    prayer: 'I choose You again.',
+    color: '#2D5A3D',
+    Icon: Heart,
+  },
+  {
+    step: 4,
+    name: 'Re-surrender',
+    duration: '1 breath',
+    instruction: 'Let go of control. Trust His plan.',
+    prayer: 'Into Your hands.',
+    color: '#8B4513',
+    Icon: Hand,
+  },
+];
 
 const CHECKLIST_STORAGE_KEY = '@sanctus/daily_checklist';
 
@@ -35,9 +80,30 @@ export default function TrackerScreen() {
   const { sessions } = useStorage();
   const stats = useTrackerStats(sessions);
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
+  const [rhythmExpanded, setRhythmExpanded] = useState(false);
+  const [isWearableUser, setIsWearableUser] = useState(false);
 
   // Get today's date string
   const today = new Date().toISOString().split('T')[0];
+
+  // Check experience mode on mount
+  useEffect(() => {
+    const checkExperienceMode = async () => {
+      try {
+        const mode = await AsyncStorage.getItem('@sanctus/experience_mode');
+        setIsWearableUser(mode === 'wearable');
+      } catch (error) {
+        // Default to app-only if error
+      }
+    };
+    checkExperienceMode();
+  }, []);
+
+  const toggleRhythmExpanded = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setRhythmExpanded(!rhythmExpanded);
+  };
 
   // Calculate current day in the 40-day journey
   const currentDay = Math.min(stats.totalSessions + 1, TOTAL_DAYS);
@@ -102,8 +168,92 @@ export default function TrackerScreen() {
           />
         </AnimatedEntrance>
 
-        {/* 40-Day Journey Card */}
+        {/* Divine Rhythm Education Card */}
         <AnimatedEntrance delay={50}>
+          <View style={styles.rhythmCard}>
+            {/* Header - Always Visible */}
+            <PressableScale
+              onPress={toggleRhythmExpanded}
+              haptic="none"
+              scaleValue={0.99}
+            >
+              <View style={styles.rhythmHeader}>
+                <View style={styles.rhythmHeaderLeft}>
+                  <View style={styles.rhythmIconCircle}>
+                    <Target size={18} color={colors.gold} strokeWidth={1.5} />
+                  </View>
+                  <View>
+                    <Text style={styles.rhythmTitle}>The Divine Rhythm</Text>
+                    <Text style={styles.rhythmSubtitle}>
+                      {rhythmExpanded ? 'Your practice of presence' : 'Tap to learn the 4 R\'s'}
+                    </Text>
+                  </View>
+                </View>
+                <View style={[
+                  styles.chevronContainer,
+                  rhythmExpanded && styles.chevronExpanded
+                ]}>
+                  <ChevronDown size={20} color={colors.textMuted} />
+                </View>
+              </View>
+            </PressableScale>
+
+            {/* Expanded Content */}
+            {rhythmExpanded && (
+              <View style={styles.rhythmContent}>
+                {/* Context Message */}
+                <View style={styles.rhythmContext}>
+                  <Text style={styles.rhythmContextText}>
+                    {isWearableUser
+                      ? 'When your Sanctus device pulses, return to God through this simple pattern:'
+                      : 'When you receive a reminder, return to God through this simple pattern:'}
+                  </Text>
+                </View>
+
+                {/* The 4 R's */}
+                {DIVINE_RHYTHM_STEPS.map((step, index) => (
+                  <View
+                    key={step.name}
+                    style={[
+                      styles.rhythmStep,
+                      index < DIVINE_RHYTHM_STEPS.length - 1 && styles.rhythmStepBorder
+                    ]}
+                  >
+                    <View style={[styles.stepIconCircle, { backgroundColor: `${step.color}15` }]}>
+                      <step.Icon size={20} color={step.color} strokeWidth={1.5} />
+                    </View>
+                    <View style={styles.stepContent}>
+                      <View style={styles.stepHeader}>
+                        <Text style={[styles.stepName, { color: step.color }]}>
+                          {step.name}
+                        </Text>
+                        <Text style={styles.stepDuration}>{step.duration}</Text>
+                      </View>
+                      <Text style={styles.stepInstruction}>{step.instruction}</Text>
+                      {step.prayer && (
+                        <Text style={styles.stepPrayer}>"{step.prayer}"</Text>
+                      )}
+                      {step.question && (
+                        <Text style={styles.stepQuestion}>"{step.question}"</Text>
+                      )}
+                    </View>
+                  </View>
+                ))}
+
+                {/* Footer Inspiration */}
+                <View style={styles.rhythmFooter}>
+                  <Text style={styles.rhythmFooterText}>
+                    30 seconds to 2 minutes{'\n'}
+                    Transform ordinary moments into prayer
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
+        </AnimatedEntrance>
+
+        {/* 40-Day Journey Card */}
+        <AnimatedEntrance delay={100}>
           <View style={styles.journeyCard}>
             {/* Cover Image */}
             <Image
@@ -353,5 +503,151 @@ const styles = StyleSheet.create({
 
   bottomSpacer: {
     height: spacing.xl,
+  },
+
+  // Divine Rhythm Card
+  rhythmCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  rhythmHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.lg,
+  },
+  rhythmHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  rhythmIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.goldFaint,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  rhythmTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.primary,
+    marginBottom: 2,
+  },
+  rhythmSubtitle: {
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  chevronContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.surfaceLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chevronExpanded: {
+    transform: [{ rotate: '180deg' }],
+  },
+
+  // Expanded Content
+  rhythmContent: {
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceBorder,
+  },
+  rhythmContext: {
+    padding: spacing.lg,
+    backgroundColor: colors.goldFaint,
+  },
+  rhythmContextText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+
+  // Individual Steps
+  rhythmStep: {
+    flexDirection: 'row',
+    padding: spacing.lg,
+  },
+  rhythmStepBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surfaceBorder,
+  },
+  stepIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  stepContent: {
+    flex: 1,
+  },
+  stepHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  stepName: {
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+  },
+  stepDuration: {
+    fontSize: 12,
+    color: colors.textMuted,
+    fontStyle: 'italic',
+  },
+  stepInstruction: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginBottom: 4,
+  },
+  stepPrayer: {
+    fontSize: 14,
+    color: colors.gold,
+    fontStyle: 'italic',
+    fontFamily: 'Georgia',
+  },
+  stepQuestion: {
+    fontSize: 14,
+    color: colors.textMuted,
+    fontStyle: 'italic',
+    fontFamily: 'Georgia',
+  },
+
+  // Footer
+  rhythmFooter: {
+    padding: spacing.lg,
+    backgroundColor: colors.surfaceLight,
+    alignItems: 'center',
+  },
+  rhythmFooterText: {
+    fontSize: 13,
+    color: colors.textMuted,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });

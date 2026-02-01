@@ -143,7 +143,7 @@ export default function PrayerScreen() {
           {/* Expanded Prayer Journey - Seamless dark panel */}
           {expanded && (
             <View style={styles.expandedContent}>
-              {/* Phase 1: Recollection */}
+              {/* Phase 1: Recollection - Silent breath awareness */}
               <View style={styles.phaseSection}>
                 <View style={styles.phaseHeader}>
                   <View style={[styles.phaseAccent, { backgroundColor: '#1A365D' }]} />
@@ -153,12 +153,47 @@ export default function PrayerScreen() {
                       <Text style={styles.phaseNumber}>01</Text>
                     </View>
                     <Text style={[styles.phaseTitle, { color: '#7BA3D4' }]}>Recollection</Text>
-                    <Text style={styles.phaseSubtitle}>Sacred Breathwork</Text>
+                    <Text style={styles.phaseSubtitle}>Sacred Stillness</Text>
                   </View>
                 </View>
                 <View style={styles.phaseBody}>
                   <Text style={styles.phaseDescription}>
-                    Center yourself in God's presence. Let go of distractions through rhythmic breathing paired with sacred phrases.
+                    Collect yourself in God's presence. Release distractions through rhythmic breathing. The breath is your only anchor—no words, only presence.
+                  </Text>
+                  <View style={styles.breathPatternContainer}>
+                    <Text style={styles.breathPatternLabel}>4-7-8 BREATH</Text>
+                    <View style={styles.breathPatternRow}>
+                      <Text style={styles.breathPatternPhase}>Inhale</Text>
+                      <Text style={styles.breathPatternTiming}>4-5 seconds</Text>
+                    </View>
+                    <View style={styles.breathPatternRow}>
+                      <Text style={styles.breathPatternPhase}>Hold</Text>
+                      <Text style={styles.breathPatternTiming}>7 seconds</Text>
+                    </View>
+                    <View style={styles.breathPatternRow}>
+                      <Text style={styles.breathPatternPhase}>Exhale</Text>
+                      <Text style={styles.breathPatternTiming}>8 seconds</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              {/* Phase 2: Contemplation - Breath prayer with sacred phrases */}
+              <View style={styles.phaseSection}>
+                <View style={styles.phaseHeader}>
+                  <View style={[styles.phaseAccent, { backgroundColor: '#B8860B' }]} />
+                  <View style={styles.phaseHeaderContent}>
+                    <View style={styles.phaseTitleRow}>
+                      <BookOpen size={18} color="#D4AF37" strokeWidth={2} />
+                      <Text style={styles.phaseNumber}>02</Text>
+                    </View>
+                    <Text style={[styles.phaseTitle, { color: '#D4AF37' }]}>Contemplation</Text>
+                    <Text style={styles.phaseSubtitle}>Breath Prayer</Text>
+                  </View>
+                </View>
+                <View style={styles.phaseBody}>
+                  <Text style={styles.phaseDescription}>
+                    Rest in God's presence with ancient words. Not analyzing—receiving. Let each breath draw you deeper into trust.
                   </Text>
                   <View style={styles.breathContainer}>
                     <View style={styles.breathRow}>
@@ -173,27 +208,7 @@ export default function PrayerScreen() {
                 </View>
               </View>
 
-              {/* Phase 2: Contemplation */}
-              <View style={styles.phaseSection}>
-                <View style={styles.phaseHeader}>
-                  <View style={[styles.phaseAccent, { backgroundColor: '#B8860B' }]} />
-                  <View style={styles.phaseHeaderContent}>
-                    <View style={styles.phaseTitleRow}>
-                      <BookOpen size={18} color="#D4AF37" strokeWidth={2} />
-                      <Text style={styles.phaseNumber}>02</Text>
-                    </View>
-                    <Text style={[styles.phaseTitle, { color: '#D4AF37' }]}>Contemplation</Text>
-                    <Text style={styles.phaseSubtitle}>Scriptural Meditation</Text>
-                  </View>
-                </View>
-                <View style={styles.phaseBody}>
-                  <Text style={styles.phaseDescription}>
-                    Rest in Scripture. Allow God's Word to wash over you—not analyzing, but receiving. Let truth sink deep into your heart, cultivating trust in His providence.
-                  </Text>
-                </View>
-              </View>
-
-              {/* Phase 3: Praise, Petition, Visualization */}
+              {/* Phase 3: Praise & Petition - Active prayer */}
               <View style={[styles.phaseSection, { borderBottomWidth: 0 }]}>
                 <View style={styles.phaseHeader}>
                   <View style={[styles.phaseAccent, { backgroundColor: '#722F37' }]} />
@@ -203,12 +218,12 @@ export default function PrayerScreen() {
                       <Text style={styles.phaseNumber}>03</Text>
                     </View>
                     <Text style={[styles.phaseTitle, { color: '#C4737B' }]}>Praise & Petition</Text>
-                    <Text style={styles.phaseSubtitle}>Active, Imaginative Prayer</Text>
+                    <Text style={styles.phaseSubtitle}>Active Prayer</Text>
                   </View>
                 </View>
                 <View style={styles.phaseBody}>
                   <Text style={styles.phaseDescription}>
-                    Engage your heart and imagination in active communion with God:
+                    Engage your heart in active communion with God:
                   </Text>
                   <View style={styles.actionList}>
                     <View style={styles.actionItem}>
@@ -217,11 +232,7 @@ export default function PrayerScreen() {
                     </View>
                     <View style={styles.actionItem}>
                       <Text style={styles.actionLabel}>Petition</Text>
-                      <Text style={styles.actionText}>Present your needs and desires to Him with trust</Text>
-                    </View>
-                    <View style={styles.actionItem}>
-                      <Text style={styles.actionLabel}>Visualize</Text>
-                      <Text style={styles.actionText}>See and emotionally embrace your goals as already fulfilled through His grace</Text>
+                      <Text style={styles.actionText}>Bring your needs, hopes, and intercessions to Him with trust</Text>
                     </View>
                   </View>
                 </View>
@@ -419,10 +430,41 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
   },
 
-  // Breath Container
+  // Breath Pattern Container (Phase 1 - Recollection)
+  breathPatternContainer: {
+    marginTop: spacing.md,
+    backgroundColor: 'rgba(26, 54, 93, 0.15)',
+    borderRadius: radius.sm,
+    padding: spacing.md,
+  },
+  breathPatternLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1.5,
+    color: '#7BA3D4',
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+  },
+  breathPatternRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.xs,
+  },
+  breathPatternPhase: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.7)',
+  },
+  breathPatternTiming: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#7BA3D4',
+  },
+
+  // Breath Prayer Container (Phase 2 - Contemplation)
   breathContainer: {
     marginTop: spacing.md,
-    backgroundColor: 'rgba(26, 54, 93, 0.2)',
+    backgroundColor: 'rgba(184, 134, 11, 0.15)',
     borderRadius: radius.sm,
     padding: spacing.md,
   },
@@ -435,7 +477,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 1.5,
-    color: '#7BA3D4',
+    color: '#D4AF37',
     textTransform: 'uppercase',
     width: 55,
   },
