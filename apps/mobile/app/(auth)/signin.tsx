@@ -137,6 +137,8 @@ export default function SignInScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                textContentType="emailAddress"
+                autoComplete="email"
               />
               {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
             </View>
@@ -158,6 +160,8 @@ export default function SignInScreen() {
                   }}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
+                  textContentType="password"
+                  autoComplete="current-password"
                 />
                 <PressableScale
                   onPress={() => setShowPassword(!showPassword)}

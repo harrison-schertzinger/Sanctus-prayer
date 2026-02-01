@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Image, Platform } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, ScrollView, Text, Image, Platform, TouchableOpacity, LayoutAnimation, UIManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,14 +9,70 @@ import { colors, spacing, radius } from '@/lib/colors';
 import { useStorage } from '@/hooks/useStorage';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { NightButton } from '@/components/ui/PremiumButton';
+import { fetchNightPrayer } from '@/lib/liturgy/api';
+import { NightPrayerContent } from '@/lib/liturgy/types';
 import { getFallbackNightPrayer } from '@/lib/liturgy/fallback';
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+// Days of the week for Compline
+const DAYS = [
+  { key: 0, label: 'Sun', full: 'Sunday' },
+  { key: 1, label: 'Mon', full: 'Monday' },
+  { key: 2, label: 'Tue', full: 'Tuesday' },
+  { key: 3, label: 'Wed', full: 'Wednesday' },
+  { key: 4, label: 'Thu', full: 'Thursday' },
+  { key: 5, label: 'Fri', full: 'Friday' },
+  { key: 6, label: 'Sat', full: 'Saturday' },
+];
 
 export default function NightScreen() {
   const { saveSession } = useStorage();
   const [completed, setCompleted] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(() => new Date().getDay());
+  const [nightPrayer, setNightPrayer] = useState<NightPrayerContent | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const scrollViewRef = useRef<ScrollView>(null);
 
-  // Get tonight's Liturgy of the Hours content
-  const nightPrayer = getFallbackNightPrayer(new Date());
+  // Today's day of week (0-6)
+  const today = new Date().getDay();
+
+  // Load night prayer when day changes
+  useEffect(() => {
+    loadNightPrayer(selectedDay);
+  }, [selectedDay]);
+
+  const loadNightPrayer = async (dayOfWeek: number) => {
+    setIsLoading(true);
+    try {
+      // Create a date for the selected day of week
+      const targetDate = new Date();
+      const currentDay = targetDate.getDay();
+      const diff = dayOfWeek - currentDay;
+      targetDate.setDate(targetDate.getDate() + diff);
+
+      const prayer = await fetchNightPrayer(targetDate);
+      setNightPrayer(prayer);
+    } catch (error) {
+      // Fallback to default content
+      setNightPrayer(getFallbackNightPrayer(new Date()));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDayChange = (dayKey: number) => {
+    if (dayKey !== selectedDay) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setSelectedDay(dayKey);
+      // Scroll content to top when changing days
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    }
+  };
 
   const handleComplete = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -28,10 +84,56 @@ export default function NightScreen() {
     setCompleted(true);
   };
 
+  // Show loading or fallback if no content
+  if (!nightPrayer) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <StatusBar style="light" />
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Preparing Night Prayer...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="light" />
+
+      {/* Day of Week Tabs */}
+      <View style={styles.dayTabsContainer}>
+        {DAYS.map((day) => {
+          const isSelected = day.key === selectedDay;
+          const isToday = day.key === today;
+          return (
+            <TouchableOpacity
+              key={day.key}
+              style={[
+                styles.dayTab,
+                isSelected && styles.dayTabSelected,
+              ]}
+              onPress={() => handleDayChange(day.key)}
+              activeOpacity={0.7}
+            >
+              <Text style={[
+                styles.dayTabText,
+                isSelected && styles.dayTabTextSelected,
+              ]}>
+                {day.label}
+              </Text>
+              {isToday && (
+                <View style={[
+                  styles.todayDot,
+                  isSelected && styles.todayDotSelected,
+                ]} />
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
       <ScrollView
+        ref={scrollViewRef}
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
@@ -52,6 +154,7 @@ export default function NightScreen() {
               <Text style={styles.headerTitle}>NIGHT</Text>
               <Text style={styles.headerSubtitle}>— Prayer —</Text>
               <Text style={styles.headerTitle}>COMPLINE</Text>
+              <Text style={styles.dayLabel}>{DAYS[selectedDay].full}</Text>
             </LinearGradient>
           </View>
         </AnimatedEntrance>
@@ -166,8 +269,32 @@ export default function NightScreen() {
           </View>
         </AnimatedEntrance>
 
-        {/* Complete Button */}
+        {/* Classic Prayers */}
         <AnimatedEntrance delay={200}>
+          <View style={styles.classicPrayersCard}>
+            {/* Our Father */}
+            <View style={styles.classicPrayer}>
+              <Text style={styles.classicPrayerLabel}>PATER NOSTER</Text>
+              <Text style={styles.classicPrayerText}>
+                Our Father, who art in heaven, hallowed be thy name; thy kingdom come, thy will be done on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen.
+              </Text>
+            </View>
+
+            {/* Divider */}
+            <View style={styles.prayerDivider} />
+
+            {/* Glory Be */}
+            <View style={styles.classicPrayer}>
+              <Text style={styles.classicPrayerLabel}>GLORIA PATRI</Text>
+              <Text style={styles.classicPrayerText}>
+                Glory be to the Father, and to the Son, and to the Holy Spirit, as it was in the beginning, is now, and ever shall be, world without end. Amen.
+              </Text>
+            </View>
+          </View>
+        </AnimatedEntrance>
+
+        {/* Complete Button */}
+        <AnimatedEntrance delay={250}>
           {!completed ? (
             <NightButton onPress={handleComplete}>
               Complete Night Prayer
@@ -201,6 +328,61 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingTop: spacing.md,
     gap: spacing.lg,
+  },
+
+  // Loading State
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    fontSize: 14,
+    color: colors.night.textSecondary,
+    fontStyle: 'italic',
+  },
+
+  // Day Tabs
+  dayTabsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.night.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.08)',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  dayTab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    marginHorizontal: 3,
+    borderRadius: radius.md,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+  },
+  dayTabSelected: {
+    backgroundColor: colors.night.gold,
+  },
+  dayTabText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.5)',
+    letterSpacing: 0.3,
+  },
+  dayTabTextSelected: {
+    color: colors.night.background,
+  },
+  todayDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.night.gold,
+    marginTop: 3,
+  },
+  todayDotSelected: {
+    backgroundColor: colors.night.background,
   },
 
   // Header Card with Image
@@ -250,6 +432,13 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.85)',
     fontFamily: 'Georgia',
     marginVertical: -2,
+  },
+  dayLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.night.gold,
+    marginTop: spacing.sm,
+    letterSpacing: 1,
   },
 
   // Liturgy Panel - Seamless dark
@@ -338,6 +527,36 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: 'rgba(255,255,255,0.8)',
     fontStyle: 'italic',
+  },
+
+  // Classic Prayers Card
+  classicPrayersCard: {
+    backgroundColor: colors.night.surface,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+  },
+  classicPrayer: {
+    paddingVertical: spacing.md,
+  },
+  classicPrayerLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 2,
+    color: 'rgba(255,255,255,0.5)',
+    marginBottom: spacing.sm,
+  },
+  classicPrayerText: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: 'rgba(255,255,255,0.8)',
+    fontFamily: 'Georgia',
+  },
+  prayerDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    marginVertical: spacing.sm,
   },
 
   // Marian Antiphon Card

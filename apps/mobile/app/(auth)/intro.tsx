@@ -112,12 +112,12 @@ export default function IntroScreen() {
         animated: true,
       });
     } else {
-      router.push('/(auth)/signup');
+      router.push('/(auth)/experience-mode');
     }
   };
 
   const handleSkip = () => {
-    router.push('/(auth)/signup');
+    router.push('/(auth)/experience-mode');
   };
 
   const isLastSlide = currentIndex === SLIDES.length - 1;

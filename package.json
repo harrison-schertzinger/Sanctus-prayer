@@ -15,6 +15,10 @@
     "mobile:android": "npm run android --workspace=apps/mobile",
     "typecheck": "tsc --noEmit"
   },
+  "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
   "author": "Sanctus Empire",
   "license": "UNLICENSED"
 }

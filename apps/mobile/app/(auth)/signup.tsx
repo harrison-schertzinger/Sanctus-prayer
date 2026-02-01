@@ -143,6 +143,8 @@ export default function SignUpScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                textContentType="emailAddress"
+                autoComplete="email"
               />
               {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
             </View>
@@ -164,6 +166,8 @@ export default function SignUpScreen() {
                   }}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
+                  textContentType="newPassword"
+                  autoComplete="new-password"
                 />
                 <PressableScale
                   onPress={() => setShowPassword(!showPassword)}
@@ -197,6 +201,8 @@ export default function SignUpScreen() {
                   }}
                   secureTextEntry={!showConfirmPassword}
                   autoCapitalize="none"
+                  textContentType="newPassword"
+                  autoComplete="new-password"
                 />
                 <PressableScale
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
