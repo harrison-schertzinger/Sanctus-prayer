@@ -27,7 +27,7 @@ const DIVINE_RHYTHM_STEPS = [
     step: 1,
     name: 'Recenter',
     duration: '2-3 breaths',
-    instruction: 'Stop. Breathe. Become present to this moment.',
+    instruction: 'Stop. Breathe. Come back to peace in the present moment.',
     question: 'Where am I? What am I feeling?',
     color: '#1B3A57',
     Icon: Target,
@@ -36,7 +36,7 @@ const DIVINE_RHYTHM_STEPS = [
     step: 2,
     name: 'Realign',
     duration: '1 breath',
-    instruction: 'Turn your attention to God. Remember His presence.',
+    instruction: 'Turn your attention to God. Come back to Him.',
     prayer: 'You are here. I am Yours.',
     color: '#B8860B',
     Icon: Compass,
@@ -265,7 +265,7 @@ export default function TrackerScreen() {
                 <View style={styles.rhythmFooter}>
                   <Text style={styles.rhythmFooterText}>
                     30 seconds to 2 minutes{'\n'}
-                    Transform ordinary moments into prayer
+                    Come back to peace in the present moment. Come back to Him.
                   </Text>
                 </View>
               </View>

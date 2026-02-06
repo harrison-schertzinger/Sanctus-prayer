@@ -27,7 +27,7 @@ export default function PhaseDisplay({
       case 'contemplation':
         return 'Contemplation';
       case 'praise':
-        return 'Praise & Surrender';
+        return 'Praise & Petition';
     }
   };
 
@@ -36,9 +36,9 @@ export default function PhaseDisplay({
       case 'recollection':
         return 'Collect yourself before God';
       case 'contemplation':
-        return 'Smooth breath with contemplation';
+        return 'Rest in sacred words on your breath';
       case 'praise':
-        return 'Gratitude, petition, and surrender';
+        return 'Gratitude, petition, and trust';
     }
   };
 
