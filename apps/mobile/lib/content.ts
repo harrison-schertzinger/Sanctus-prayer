@@ -18,7 +18,7 @@ export const practices: Record<'peace' | 'joy', Practice> = {
       recollection: {
         inhalePhrase: null,
         exhalePhrase: null,
-        breathPattern: { inhale: 5, hold: 7, exhale: 8 },
+        breathPattern: { inhale: 4, hold: 7, exhale: 8 },
       },
       contemplation: {
         inhalePhrase: 'My Lord and My God',

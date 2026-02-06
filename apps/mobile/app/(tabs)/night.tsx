@@ -9,6 +9,7 @@ import { colors, spacing, radius } from '@/lib/colors';
 import { useStorage } from '@/hooks/useStorage';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { NightButton } from '@/components/ui/PremiumButton';
+import { SettingsGear } from '@/components/ui/SettingsGear';
 import { fetchNightPrayer } from '@/lib/liturgy/api';
 import { NightPrayerContent } from '@/lib/liturgy/types';
 import { getFallbackNightPrayer } from '@/lib/liturgy/fallback';
@@ -99,6 +100,11 @@ export default function NightScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="light" />
+
+      {/* Top Bar */}
+      <View style={styles.topBar}>
+        <SettingsGear color={colors.night.textSecondary} />
+      </View>
 
       {/* Day of Week Tabs */}
       <View style={styles.dayTabsContainer}>
@@ -320,6 +326,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.night.background,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: spacing.lg,
   },
   scrollView: {
     flex: 1,

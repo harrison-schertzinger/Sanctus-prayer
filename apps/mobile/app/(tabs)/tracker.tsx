@@ -12,6 +12,7 @@ import { useTrackerStats } from '@/hooks/useTrackerStats';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { PressableScale } from '@/components/ui/PressableScale';
 import { KPIBar } from '@/components/ui/KPIBar';
+import { SettingsGear } from '@/components/ui/SettingsGear';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -152,6 +153,12 @@ export default function TrackerScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
+
+      {/* Top Bar */}
+      <View style={styles.topBar}>
+        <SettingsGear />
+      </View>
+
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
@@ -356,6 +363,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: spacing.lg,
   },
   scrollView: {
     flex: 1,

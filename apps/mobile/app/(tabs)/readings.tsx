@@ -7,6 +7,7 @@ import { BookOpen, Music, BookMarked } from 'lucide-react-native';
 import { colors, spacing, radius } from '@/lib/colors';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { PressableScale } from '@/components/ui/PressableScale';
+import { SettingsGear } from '@/components/ui/SettingsGear';
 import { fetchDailyReadings } from '@/lib/liturgy/api';
 import { DailyMassReadings } from '@/lib/liturgy/types';
 
@@ -149,6 +150,11 @@ export default function ReadingsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
+
+      {/* Top Bar */}
+      <View style={styles.topBar}>
+        <SettingsGear />
+      </View>
 
       {/* Horizontal Date Strip - Always Visible */}
       <View style={styles.dateStripContainer}>
@@ -332,6 +338,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: spacing.lg,
   },
   scrollView: {
     flex: 1,

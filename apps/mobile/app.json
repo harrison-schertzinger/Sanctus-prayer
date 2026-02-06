@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Sanctus",
-    "slug": "sanctus-prototype-app",
+    "slug": "sanctus-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,9 +9,9 @@
     "newArchEnabled": true,
     "scheme": "sanctus",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/Spark-logo-transparent.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FAFAF8"
+      "backgroundColor": "#1A1A2E"
     },
     "ios": {
       "supportsTablet": true,

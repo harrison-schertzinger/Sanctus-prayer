@@ -15,17 +15,29 @@ import { GoldButton } from '@/components/ui/PremiumButton';
 import { KPIBar } from '@/components/ui/KPIBar';
 import { ConcentricTimerSelector } from '@/components/ui/ConcentricTimerSelector';
 import { TimerStatsBar } from '@/components/ui/TimerStatsBar';
+import { SettingsGear } from '@/components/ui/SettingsGear';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Practice data
 const practice = {
   name: 'Peace in His Presence',
   subtitle: 'Trust & Surrender',
-  currentDay: 12,
   totalDays: 40,
   breathIn: 'My Lord and My God',
   breathOut: 'Jesus, I Trust in You',
   description: 'A 40-day journey of surrendering anxiety and cultivating deep trust in God\'s providence through contemplative prayer.',
 };
+
+function getJourneyDay(journeyStartDate: string | null | undefined): number {
+  if (!journeyStartDate) return 1;
+  const start = new Date(journeyStartDate);
+  start.setHours(0, 0, 0, 0);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const diffMs = now.getTime() - start.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  return Math.max(1, Math.min(diffDays + 1, practice.totalDays));
+}
 
 export default function PrayerScreen() {
   const router = useRouter();
@@ -38,8 +50,10 @@ export default function PrayerScreen() {
 
   const chevronRotation = useRef(new Animated.Value(0)).current;
 
+  const { profile } = useAuth();
   const { sessions } = useStorage();
   const stats = useTrackerStats(sessions);
+  const journeyDay = getJourneyDay(profile?.journey_start_date);
 
   const handleBegin = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -81,6 +95,12 @@ export default function PrayerScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
+
+      {/* Top Bar */}
+      <View style={styles.topBar}>
+        <SettingsGear />
+      </View>
+
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
@@ -113,7 +133,7 @@ export default function PrayerScreen() {
                 <Text style={styles.practiceLabel}>SANCTUS TRAINING</Text>
                 <View style={styles.dayBadge}>
                   <Text style={styles.dayBadgeText}>
-                    Day {practice.currentDay} of {practice.totalDays}
+                    Day {journeyDay} of {practice.totalDays}
                   </Text>
                 </View>
               </View>
@@ -275,6 +295,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: spacing.lg,
   },
   scrollView: {
     flex: 1,
