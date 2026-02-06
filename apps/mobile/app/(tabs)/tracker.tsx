@@ -7,12 +7,14 @@ import { Check, ChevronDown, Target, Compass, Heart, Hand } from 'lucide-react-n
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { colors, spacing, radius } from '@/lib/colors';
+import { getLocalDateKey } from '@/lib/dates';
 import { useStorage } from '@/hooks/useStorage';
 import { useTrackerStats } from '@/hooks/useTrackerStats';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { PressableScale } from '@/components/ui/PressableScale';
 import { KPIBar } from '@/components/ui/KPIBar';
 import { SettingsGear } from '@/components/ui/SettingsGear';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -64,6 +66,17 @@ const CHECKLIST_STORAGE_KEY = '@sanctus/daily_checklist';
 // 40-day journey configuration
 const TOTAL_DAYS = 40;
 
+function getJourneyDay(journeyStartDate: string | null | undefined): number {
+  if (!journeyStartDate) return 1;
+  const start = new Date(journeyStartDate);
+  start.setHours(0, 0, 0, 0);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const diffMs = now.getTime() - start.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  return Math.max(1, Math.min(diffDays + 1, TOTAL_DAYS));
+}
+
 // Daily checklist items
 const CHECKLIST_ITEMS = [
   { id: 'morning-reading', label: 'Morning Reading' },
@@ -80,12 +93,13 @@ interface DailyChecklist {
 export default function TrackerScreen() {
   const { sessions } = useStorage();
   const stats = useTrackerStats(sessions);
+  const { profile } = useAuth();
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [rhythmExpanded, setRhythmExpanded] = useState(false);
   const [isWearableUser, setIsWearableUser] = useState(false);
 
-  // Get today's date string
-  const today = new Date().toISOString().split('T')[0];
+  // Get today's date string (local timezone)
+  const today = getLocalDateKey();
 
   // Check experience mode on mount
   useEffect(() => {
@@ -106,8 +120,8 @@ export default function TrackerScreen() {
     setRhythmExpanded(!rhythmExpanded);
   };
 
-  // Calculate current day in the 40-day journey
-  const currentDay = Math.min(stats.totalSessions + 1, TOTAL_DAYS);
+  // Calculate current day in the 40-day journey from journey_start_date
+  const currentDay = getJourneyDay(profile?.journey_start_date);
 
   // Load checklist from storage on mount
   useEffect(() => {

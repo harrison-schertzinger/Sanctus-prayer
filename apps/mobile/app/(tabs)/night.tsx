@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Moon, BookOpen, Heart, Check } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { colors, spacing, radius } from '@/lib/colors';
+import { getLocalDateKey } from '@/lib/dates';
 import { useStorage } from '@/hooks/useStorage';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { NightButton } from '@/components/ui/PremiumButton';
@@ -80,7 +81,7 @@ export default function NightScreen() {
     await saveSession({
       practice: 'night',
       duration: 10,
-      date: new Date().toISOString().split('T')[0],
+      date: getLocalDateKey(),
     });
     setCompleted(true);
   };

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { PracticeSession } from '@/lib/types';
+import { getLocalDateKey } from '@/lib/dates';
 
 interface TrackerStats {
   currentStreak: number;
@@ -42,8 +43,8 @@ export function useTrackerStats(sessions: PracticeSession[]): TrackerStats {
     const mostRecentDateObj = new Date(mostRecentDate);
     mostRecentDateObj.setHours(0, 0, 0, 0);
 
-    const todayStr = today.toISOString().split('T')[0];
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const todayStr = getLocalDateKey(today);
+    const yesterdayStr = getLocalDateKey(yesterday);
 
     if (mostRecentDate === todayStr || mostRecentDate === yesterdayStr) {
       // Start counting streak

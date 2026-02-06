@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { colors, spacing, radius } from '@/lib/colors';
+import { getLocalDateKey } from '@/lib/dates';
 import { Label, BodySecondary } from '@/components/ui/Typography';
 import { PracticeSession } from '@/lib/types';
 
@@ -77,7 +78,7 @@ export default function CalendarGrid({
     if (day === null) return 'empty';
 
     const dateStr = `${selectedMonth.getFullYear()}-${String(selectedMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalDateKey();
 
     if (dateStr === today) return 'today';
     if (practiceDates.has(dateStr)) return 'practiced';

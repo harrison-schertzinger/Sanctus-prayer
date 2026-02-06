@@ -13,6 +13,7 @@ import { GradientButton } from '@/components/ui/GradientButton';
 import { AnimatedEntrance } from '@/components/ui/AnimatedEntrance';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { getLocalDateKey } from '@/lib/dates';
 import { colors, spacing, radius } from '@/lib/design';
 import { useNotifications } from '@/hooks/useNotifications';
 import { getExperienceMode } from '@/lib/experienceMode';
@@ -59,9 +60,8 @@ export default function JourneyStartScreen() {
   useEffect(() => {
     const initializeJourney = async () => {
       if (user && isSupabaseConfigured()) {
-        const today = new Date().toISOString().split('T')[0];
         await updateProfile({
-          journey_start_date: today,
+          journey_start_date: getLocalDateKey(),
           current_journey_day: 1,
         });
       }

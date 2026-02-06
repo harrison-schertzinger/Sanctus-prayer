@@ -14,6 +14,7 @@ import { usePracticeTimer } from '@/hooks/usePracticeTimer';
 import { useStorage } from '@/hooks/useStorage';
 import { PracticeId, PracticePhaseType } from '@/lib/types';
 import { getRandomCompletionMessage } from '@/lib/content';
+import { getLocalDateKey } from '@/lib/dates';
 
 const PHASE_ORDER: PracticePhaseType[] = ['recollection', 'contemplation', 'praise'];
 
@@ -47,9 +48,8 @@ export default function PracticeScreen() {
       setCompletionMessage(getRandomCompletionMessage(practiceId));
 
       // Save session
-      const today = new Date().toISOString().split('T')[0];
       saveSession({
-        date: today,
+        date: getLocalDateKey(),
         duration,
         practice: practiceId,
       });

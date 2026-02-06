@@ -4,12 +4,13 @@
  */
 
 import { DailyMassReadings, NightPrayerContent } from './types';
+import { getLocalDateKey } from '../dates';
 
 /**
  * Fallback daily readings when API fails
  */
 export function getFallbackReadings(date: Date): DailyMassReadings {
-  const dateStr = date.toISOString().split('T')[0];
+  const dateStr = getLocalDateKey(date);
   const dayOfWeek = date.getDay();
 
   // Rotate through a set of beautiful readings
@@ -25,7 +26,7 @@ export function getFallbackReadings(date: Date): DailyMassReadings {
  * Fallback Night Prayer content
  */
 export function getFallbackNightPrayer(date: Date): NightPrayerContent {
-  const dateStr = date.toISOString().split('T')[0];
+  const dateStr = getLocalDateKey(date);
 
   return {
     date: dateStr,
