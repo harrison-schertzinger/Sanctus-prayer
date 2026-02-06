@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { colors } from '@/lib/colors';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Configure notifications handler
 // Permissions are requested after onboarding in journey-start.tsx
@@ -20,18 +21,20 @@ Notifications.setNotificationHandler({
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <AuthProvider>
-        <StatusBar style="dark" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: colors.background },
-            animation: 'fade',
-          }}
-        />
-      </AuthProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={styles.container}>
+        <AuthProvider>
+          <StatusBar style="dark" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: colors.background },
+              animation: 'fade',
+            }}
+          />
+        </AuthProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }
 
