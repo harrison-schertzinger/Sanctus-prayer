@@ -34,7 +34,7 @@ export async function initializeAudio(): Promise<void> {
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       playsInSilentModeIOS: true,
-      staysActiveInBackground: true,
+      staysActiveInBackground: false,
       shouldDuckAndroid: true,
     });
     if (__DEV__) console.log('🔊 Audio initialized');

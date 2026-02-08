@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Sanctus",
+    "name": "Sanctus Prayer",
     "slug": "sanctus-prototype-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,6 +18,14 @@
       "bundleIdentifier": "com.sanctus.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          }
+        ]
       }
     },
     "android": {
@@ -50,6 +58,12 @@
       "eas": {
         "projectId": "0960c51a-64dd-4763-aec7-1907277626f0"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0960c51a-64dd-4763-aec7-1907277626f0"
     }
   }
 }
