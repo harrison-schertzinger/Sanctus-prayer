@@ -36,7 +36,7 @@ export default function Footer() {
           </div>
 
           {/* Navigation links */}
-          <nav className="flex gap-8 text-sm text-white/60">
+          <nav className="flex flex-wrap justify-center gap-8 text-sm text-white/60">
             <Link href="/vision" className="hover:text-[#B8960C] transition-colors duration-300">
               Vision
             </Link>
@@ -48,6 +48,12 @@ export default function Footer() {
             </Link>
             <Link href="/about" className="hover:text-[#B8960C] transition-colors duration-300">
               About
+            </Link>
+            <Link href="/privacy" className="hover:text-[#B8960C] transition-colors duration-300">
+              Privacy
+            </Link>
+            <Link href="/support" className="hover:text-[#B8960C] transition-colors duration-300">
+              Support
             </Link>
           </nav>
 
