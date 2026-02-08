@@ -1,5 +1,6 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config');
+const exclusionList = require('metro-config/private/defaults/exclusionList').default;
 const path = require('path');
 
 const projectRoot = __dirname;
@@ -17,13 +18,12 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, 'node_modules'),
 ];
 
-// Prevent Metro from resolving into the web app's node_modules
-// which contains Next.js packages that conflict with React Native
-config.resolver.blockList = [
-  ...(config.resolver.blockList ? [config.resolver.blockList] : []),
-  new RegExp(path.resolve(monorepoRoot, 'apps/web/node_modules/.*').replace(/[/\\]/g, '[/\\\\]')),
-  new RegExp(path.resolve(monorepoRoot, 'apps/web/.next/.*').replace(/[/\\]/g, '[/\\\\]')),
-];
+// Prevent Metro from resolving into the web app's directories
+// which contain Next.js packages that conflict with React Native
+config.resolver.blockList = exclusionList([
+  /apps\/web\/node_modules\/.*/,
+  /apps\/web\/\.next\/.*/,
+]);
 
 // Ensure all extensions are handled
 config.resolver.sourceExts = [...config.resolver.sourceExts, 'mjs'];
