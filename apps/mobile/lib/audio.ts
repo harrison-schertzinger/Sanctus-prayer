@@ -12,10 +12,12 @@
 import { Audio, AVPlaybackStatus } from 'expo-av';
 
 // Sound file references
+const sanctusAudio = require('../assets/audio/sanctus-audio.mp3');
+
 const soundFiles = {
-  gong: require('../assets/audio/gong.mp3'),
-  transitionChime: require('../assets/audio/transition.mp3'),
-  completionBells: require('../assets/audio/completion.mp3'),
+  gong: sanctusAudio,
+  transitionChime: sanctusAudio,
+  completionBells: sanctusAudio,
   breathIn: null, // Future: require('../assets/audio/breath-in.mp3'),
   breathOut: null, // Future: require('../assets/audio/breath-out.mp3'),
 } as const;
