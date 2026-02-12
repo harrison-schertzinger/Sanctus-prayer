@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Support | Sanctus Prayer',
-  description: 'Get help with the Sanctus Prayer app. Contact us for support, bug reports, or feedback.',
+  title: 'Support | Sanctus Health & Performance',
+  description: 'Get help with Sanctus. Contact us for support, bug reports, or feedback.',
 };
 
 export default function SupportPage() {
@@ -16,7 +16,7 @@ export default function SupportPage() {
             Support
           </h1>
           <p className="text-[#6B6B6B] text-lg leading-relaxed">
-            We&apos;re here to help you get the most out of Sanctus Prayer.
+            We&apos;re here to help you get the most out of Sanctus.
           </p>
         </div>
       </section>
@@ -27,17 +27,17 @@ export default function SupportPage() {
           <div className="bg-[#F5F3EF] rounded-2xl p-8 md:p-12 border border-[#E8DFC4]">
             <h2 className="text-2xl font-serif text-[#1A1A1A] mb-4">Get in Touch</h2>
             <p className="text-[#6B6B6B] leading-relaxed mb-6">
-              If you have a question, found a bug, or want to share feedback about the app, reach out directly. We read and respond to every message.
+              If you have a question, found a bug, or want to share feedback, reach out directly. We read and respond to every message.
             </p>
 
             <a
-              href="mailto:harrison@theyoufirstproject.com"
+              href="mailto:harrison@sanctusprayer.com"
               className="inline-flex items-center gap-2 bg-[#B8960C] text-white font-medium px-6 py-3 rounded-lg hover:bg-[#A3850B] transition-colors"
             >
               Email Us
             </a>
             <p className="text-[#6B6B6B] text-sm mt-3">
-              harrison@theyoufirstproject.com
+              harrison@sanctusprayer.com
             </p>
           </div>
 
@@ -62,7 +62,7 @@ export default function SupportPage() {
             <div className="border-b border-[#E8DFC4] pb-6">
               <h3 className="text-lg font-medium text-[#1A1A1A] mb-2">Feature Requests</h3>
               <p className="text-[#6B6B6B] leading-relaxed">
-                Have an idea for how Sanctus Prayer could be better? We&apos;d love to hear it. Your feedback shapes the future of the app.
+                Have an idea for how Sanctus could be better? We&apos;d love to hear it. Your feedback shapes the future of the product.
               </p>
             </div>
 
@@ -70,8 +70,8 @@ export default function SupportPage() {
               <h3 className="text-lg font-medium text-[#1A1A1A] mb-2">Account Deletion</h3>
               <p className="text-[#6B6B6B] leading-relaxed">
                 To request deletion of your account and all associated data, email us at{' '}
-                <a href="mailto:harrison@theyoufirstproject.com" className="text-[#B8960C] hover:underline">
-                  harrison@theyoufirstproject.com
+                <a href="mailto:harrison@sanctusprayer.com" className="text-[#B8960C] hover:underline">
+                  harrison@sanctusprayer.com
                 </a>{' '}
                 and we&apos;ll process your request.
               </p>

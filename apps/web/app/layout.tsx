@@ -6,34 +6,39 @@ import TextureOverlay from '@/components/TextureOverlay';
 import ProgressIndicator from '@/components/ProgressIndicator';
 
 export const metadata: Metadata = {
-  title: 'Sanctus | Renew Your Mind',
+  title: 'Sanctus | Contemplative Prayer for Health & Performance',
   description:
-    'A spiritual training system rooted in 2,000 years of Christian contemplative tradition. Train your mind. Transform your life.',
+    'Sanctus is a wellness wearable and companion app rooted in 2,000 years of contemplative tradition — designed for the modern pursuit of health and performance. Join the waitlist.',
   keywords: [
     'contemplative prayer',
-    'Christian meditation',
-    'spiritual training',
-    'renewal of mind',
-    'sacred center',
-    'Christian spiritual formation',
+    'wellness wearable',
+    'Christian wellness',
+    'prayer wearable',
+    'Lent prayer',
+    'guided prayer',
+    'spiritual formation',
+    'health and performance',
+    'restorative practice',
+    'contemplative tradition',
   ],
   authors: [{ name: 'Sanctus Health & Performance' }],
   icons: {
     icon: '/favicon.svg',
   },
   openGraph: {
-    title: 'Sanctus | Renew Your Mind',
+    title: 'Sanctus | Contemplative Prayer for Health & Performance',
     description:
-      'A spiritual training system rooted in 2,000 years of Christian contemplative tradition.',
+      'Sanctus is a wellness wearable and companion app rooted in 2,000 years of contemplative tradition — designed for health and performance. Join the waitlist.',
     type: 'website',
     locale: 'en_US',
-    siteName: 'Sanctus',
+    siteName: 'Sanctus Health & Performance',
+    url: 'https://sanctusprayer.com',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sanctus | Renew Your Mind',
+    title: 'Sanctus | Contemplative Prayer for Health & Performance',
     description:
-      'A spiritual training system rooted in 2,000 years of Christian contemplative tradition.',
+      'Sanctus is a wellness wearable and companion app rooted in 2,000 years of contemplative tradition — designed for health and performance.',
   },
 };
 
@@ -47,6 +52,23 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Sanctus Health & Performance',
+              url: 'https://sanctusprayer.com',
+              description:
+                'A wellness wearable and companion app rooted in 2,000 years of Christian contemplative tradition, designed for health and performance.',
+              founder: {
+                '@type': 'Person',
+                name: 'Harrison Schertzinger',
+              },
+            }),
+          }}
+        />
       </head>
       <body className="antialiased">
         <TextureOverlay />

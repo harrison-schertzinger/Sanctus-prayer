@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import EmailCapture from '@/components/EmailCapture';
 
 export default function Footer() {
   return (
@@ -10,16 +11,19 @@ export default function Footer() {
       <div className="h-px bg-gradient-to-r from-transparent via-[#B8960C]/50 to-transparent" />
 
       <div className="max-w-6xl mx-auto px-6 py-16">
-        {/* Scripture anchor */}
-        <div className="text-center mb-12">
-          <p className="font-serif italic text-lg text-white/60 max-w-xl mx-auto leading-relaxed">
-            &ldquo;Do not be conformed to this world, but be transformed by the renewal of your mind.&rdquo;
+        {/* Email capture */}
+        <div className="max-w-xl mx-auto mb-16">
+          <p className="text-center font-serif text-2xl text-white mb-3">
+            Join the Waitlist
           </p>
-          <p className="text-[#B8960C]/60 text-sm mt-3">— Romans 12:2</p>
+          <p className="text-center text-white/50 text-sm mb-6">
+            Be the first to know when Sanctus is available.
+          </p>
+          <EmailCapture buttonText="Join the Waitlist" variant="dark" />
         </div>
 
         {/* Main footer content */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-8 border-t border-white/10">
           {/* Logo & tagline */}
           <div className="flex items-center gap-4">
             <Image
@@ -31,24 +35,24 @@ export default function Footer() {
             />
             <div>
               <p className="font-serif text-xl tracking-[0.15em]">SANCTUS</p>
-              <p className="text-white/40 text-sm">Train Your Mind. Transform Your Life.</p>
+              <p className="text-white/40 text-sm">Wellness Wearable for Health &amp; Performance</p>
             </div>
           </div>
 
           {/* Navigation links */}
           <nav className="flex flex-wrap justify-center gap-8 text-sm text-white/60">
-            <Link href="/vision" className="hover:text-[#B8960C] transition-colors duration-300">
+            <a href="/#problem" className="hover:text-[#B8960C] transition-colors duration-300">
+              The Problem
+            </a>
+            <a href="/#vision" className="hover:text-[#B8960C] transition-colors duration-300">
               Vision
-            </Link>
-            <Link href="/problem" className="hover:text-[#B8960C] transition-colors duration-300">
-              Problem
-            </Link>
-            <Link href="/journey" className="hover:text-[#B8960C] transition-colors duration-300">
+            </a>
+            <a href="/#journey" className="hover:text-[#B8960C] transition-colors duration-300">
               Journey
-            </Link>
-            <Link href="/about" className="hover:text-[#B8960C] transition-colors duration-300">
+            </a>
+            <a href="/#about" className="hover:text-[#B8960C] transition-colors duration-300">
               About
-            </Link>
+            </a>
             <Link href="/privacy" className="hover:text-[#B8960C] transition-colors duration-300">
               Privacy
             </Link>

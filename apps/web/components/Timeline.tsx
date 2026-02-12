@@ -8,31 +8,31 @@ const phases = [
   {
     number: 1,
     title: 'Concept & Design',
-    description: 'Research, theological foundation, app architecture',
+    description: 'Research, theological foundation, product architecture',
     status: 'complete',
   },
   {
     number: 2,
-    title: 'Prototype App',
-    description: 'Proving the practice with founding members',
+    title: 'Companion App + Prototype Band',
+    description: 'Proving the practice with founding test cohort wearing the prototype',
     status: 'current',
   },
   {
     number: 3,
-    title: 'Wearable Development',
-    description: 'Hardware partnership, biometric integration design',
+    title: 'Wearable Production',
+    description: 'Manufacturing partnership, production-ready band design',
     status: 'upcoming',
   },
   {
     number: 4,
     title: 'Biometric Integration',
-    description: 'HRV tracking, real-time feedback loops',
+    description: 'Full HRV tracking, touch therapy, real-time feedback loops',
     status: 'upcoming',
   },
   {
     number: 5,
     title: 'Public Launch',
-    description: 'Full release with app + wearable ecosystem',
+    description: 'Full release — band + companion app ecosystem',
     status: 'upcoming',
   },
 ];
@@ -108,7 +108,7 @@ export default function Timeline() {
                   >
                     <p className="text-sm text-[#6B6B6B] flex items-center gap-2">
                       <ArrowRight size={14} className="text-[#B8960C]" />
-                      Testing with 15 founding members in Cincinnati
+                      Founding 10 wearing prototype band through 40 days of Lent
                     </p>
                   </motion.div>
                 )}

@@ -1,25 +1,20 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Mail, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { ArrowRight, Mail } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import ScriptureAnchor from '@/components/ScriptureAnchor';
-import ReadingTime from '@/components/ReadingTime';
 import HeroBackground from '@/components/HeroBackground';
 
 export default function AboutPage() {
   return (
     <main className="page-transition">
-      {/* Hero with living depth background */}
+      {/* Hero */}
       <section className="relative min-h-[40vh] flex items-center pt-24 overflow-hidden">
         <HeroBackground variant="about" showParticles={true} />
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 py-16">
           <AnimatedSection>
-            <div className="mb-6">
-              <ReadingTime minutes={4} />
-            </div>
             <p className="text-[#B8960C] text-sm tracking-widest uppercase mb-4">MEET THE FOUNDER</p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-[#1A1A1A] mb-6 leading-tight">
               Harrison Schertzinger
@@ -28,7 +23,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Photo and Bio - New layout */}
+      {/* Photo and Bio */}
       <section className="py-12">
         <div className="max-w-5xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -38,13 +33,12 @@ export default function AboutPage() {
                 <div className="relative aspect-square overflow-hidden rounded-2xl">
                   <Image
                     src="/images/founder/founder.jpg"
-                    alt="Harrison Schertzinger, Founder of Sanctus"
+                    alt="Harrison Schertzinger, Founder of Sanctus Health & Performance"
                     fill
                     className="object-cover"
                     quality={85}
                   />
                 </div>
-                {/* Subtle gold border accent */}
                 <div className="absolute -inset-2 border border-[#B8960C]/20 rounded-2xl -z-10" />
               </div>
             </AnimatedSection>
@@ -53,24 +47,16 @@ export default function AboutPage() {
             <AnimatedSection delay={0.2}>
               <div className="prose prose-lg max-w-none">
                 <p className="text-[#6B6B6B] leading-relaxed mb-6">
-                  My journey to Sanctus began in the depths of anxiety and spiritual stagnation.
+                  Author of <em>The Angel in the Marble</em>. Co-host of The Infinite Game Podcast. Multi-company founder in health and performance.
                 </p>
                 <p className="text-[#6B6B6B] leading-relaxed mb-6">
-                  Despite my faith, I found myself fragmented — successful on the outside, struggling
-                  within. I knew all the right answers. I could quote the verses about peace and
-                  presence. But my mind was a battleground of worry, distraction, and restlessness.
+                  Harrison built Sanctus because the thing he needed most didn&apos;t exist &mdash; a wearable that treated prayer with the same seriousness the performance world gives to sleep, nutrition, and training. Not a content app. Not another notification. A wearable you never take off that actively restores the interior life.
                 </p>
                 <p className="text-[#6B6B6B] leading-relaxed mb-6">
-                  Then I discovered contemplative prayer.
-                </p>
-                <p className="text-[#6B6B6B] leading-relaxed mb-6">
-                  Not the empty-your-mind meditation of Eastern traditions, but the ancient practices
-                  of the Desert Fathers, the hesychasts, the great Christian mystics. These men and
-                  women had discovered something — a way of being present to God that transformed
-                  everything.
+                  He discovered contemplative prayer through the ancient practices of the Desert Fathers, the hesychasts, and the great Christian mystics. These men and women practiced a form of daily structured prayer that transformed everything &mdash; and the modern West had almost entirely abandoned it.
                 </p>
                 <p className="text-[#1A1A1A] leading-relaxed font-medium">
-                  What I found changed me. And I can&apos;t keep it to myself.
+                  Sanctus is his response: restore contemplative prayer to daily life through technology that makes the ancient practice tangible, measurable, and undeniable.
                 </p>
               </div>
             </AnimatedSection>
@@ -88,10 +74,9 @@ export default function AboutPage() {
                   &ldquo;
                 </div>
                 <p className="text-2xl md:text-3xl lg:text-4xl font-serif italic text-[#1A1A1A] leading-relaxed pt-8 max-w-3xl mx-auto">
-                  God has given breadcrumbs to a beggar. Sanctus is my response — an invitation to
-                  feast at a table that has been set for two thousand years.
+                  Sanctus is a wellness wearable company restoring contemplative prayer as a restorative practice. That&apos;s it. Everything we build serves that mission.
                 </p>
-                <p className="mt-6 text-[#B8960C]">— Harrison Schertzinger</p>
+                <p className="mt-6 text-[#B8960C]">&mdash; Harrison Schertzinger</p>
               </blockquote>
             </div>
           </AnimatedSection>
@@ -110,21 +95,13 @@ export default function AboutPage() {
           <AnimatedSection delay={0.1}>
             <div className="prose prose-lg max-w-none">
               <p className="text-[#6B6B6B] leading-relaxed mb-6">
-                This is not about building a company. It&apos;s about equipping the saints.
+                The wearable industry tracks everything external &mdash; heart rate, sleep stages, step counts, blood oxygen &mdash; while ignoring the interior life entirely. Meanwhile, millions of Christians feel the gap between their faith and their daily practice widening.
               </p>
               <p className="text-[#6B6B6B] leading-relaxed mb-6">
-                I believe there are millions of Christians who feel the same fragmentation I felt.
-                They love God. They want more. But they don&apos;t know how to train their minds
-                for the transformation Scripture promises.
-              </p>
-              <p className="text-[#6B6B6B] leading-relaxed mb-6">
-                Sanctus is my attempt to bridge the gap — to take the ancient wisdom of the Church
-                and make it accessible for modern life. To provide not just content, but a system.
-                Not just information, but formation.
+                Sanctus bridges that gap with hardware. A band on your wrist that doesn&apos;t just measure your body but actively intervenes &mdash; guiding you back to prayer, connecting your physiology to your practice, and establishing contemplative prayer as a daily restorative discipline.
               </p>
               <p className="text-[#1A1A1A] leading-relaxed font-medium">
-                The renewal of your mind is not a metaphor. It&apos;s a possibility. And I want to
-                help you experience it.
+                The team is building at the intersection of ancient tradition and modern technology. The mission: restore contemplative prayer to daily life in the modern West &mdash; through a wearable you never take off.
               </p>
             </div>
           </AnimatedSection>
@@ -156,18 +133,6 @@ export default function AboutPage() {
                 harrison@sanctusprayer.com
               </a>
 
-              <div className="flex items-center justify-center gap-6 mb-8">
-                <a href="#" className="text-[#6B6B6B] hover:text-[#B8960C] transition-colors">
-                  <Instagram size={24} />
-                </a>
-                <a href="#" className="text-[#6B6B6B] hover:text-[#B8960C] transition-colors">
-                  <Twitter size={24} />
-                </a>
-                <a href="#" className="text-[#6B6B6B] hover:text-[#B8960C] transition-colors">
-                  <Linkedin size={24} />
-                </a>
-              </div>
-
               <div className="gold-line w-24 mx-auto" />
             </div>
           </AnimatedSection>
@@ -179,18 +144,18 @@ export default function AboutPage() {
         <div className="max-w-3xl mx-auto px-6 text-center">
           <AnimatedSection>
             <h2 className="text-3xl md:text-5xl font-serif text-white mb-6">
-              Ready to follow along?
+              Experience Sanctus
             </h2>
             <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">
-              Join the founding members and be part of building something meaningful.
+              Our founding cohort is wearing the band through Lent. Join the waitlist to be next.
             </p>
-            <Link
-              href="/journey"
+            <a
+              href="/#join"
               className="inline-flex items-center gap-2 bg-[#B8960C] text-white font-medium px-8 py-4 rounded-lg hover:bg-[#A3850B] transition-colors"
             >
-              Join the Journey
+              Join the Waitlist
               <ArrowRight size={18} />
-            </Link>
+            </a>
           </AnimatedSection>
         </div>
       </section>

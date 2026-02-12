@@ -6,11 +6,12 @@ import { ArrowRight, Check } from 'lucide-react';
 
 interface EmailCaptureProps {
   buttonText?: string;
-  variant?: 'default' | 'prominent';
+  variant?: 'default' | 'prominent' | 'dark';
 }
 
-export default function EmailCapture({ buttonText = 'Follow the Journey', variant = 'default' }: EmailCaptureProps) {
+export default function EmailCapture({ buttonText = 'Join the Waitlist', variant = 'default' }: EmailCaptureProps) {
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -27,27 +28,34 @@ export default function EmailCapture({ buttonText = 'Follow the Journey', varian
     setIsLoading(true);
 
     try {
-      const existingEmails = JSON.parse(localStorage.getItem('sanctus_emails') || '[]');
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          firstName: firstName.trim() || undefined,
+        }),
+      });
 
-      if (existingEmails.includes(email)) {
-        setError('This email is already registered');
-        setIsLoading(false);
-        return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
       }
 
-      existingEmails.push(email);
-      localStorage.setItem('sanctus_emails', JSON.stringify(existingEmails));
-
-      await new Promise((resolve) => setTimeout(resolve, 600));
-
       setIsSubmitted(true);
-    } catch {
-      setError('Something went wrong. Please try again.');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  const isDark = variant === 'dark';
   const isProminent = variant === 'prominent';
 
   return (
@@ -61,16 +69,32 @@ export default function EmailCapture({ buttonText = 'Follow the Journey', varian
             onSubmit={handleSubmit}
             className="flex flex-col sm:flex-row gap-3"
           >
-            <div className="flex-grow">
+            <div className="flex flex-col sm:flex-row gap-3 flex-grow">
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First name"
+                className={`px-5 py-4 rounded-lg transition-all duration-300 sm:w-40 ${
+                  isDark
+                    ? 'bg-white/10 border border-white/20 text-white placeholder-white/40'
+                    : 'bg-white border border-[#E8DFC4] text-[#1A1A1A] placeholder-[#6B6B6B]/50'
+                }`}
+                disabled={isLoading}
+              />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full px-5 py-4 bg-white border border-[#E8DFC4] rounded-lg text-[#1A1A1A] placeholder-[#6B6B6B]/50 transition-all duration-300"
+                placeholder="Your email"
+                required
+                className={`flex-grow px-5 py-4 rounded-lg transition-all duration-300 ${
+                  isDark
+                    ? 'bg-white/10 border border-white/20 text-white placeholder-white/40'
+                    : 'bg-white border border-[#E8DFC4] text-[#1A1A1A] placeholder-[#6B6B6B]/50'
+                }`}
                 disabled={isLoading}
               />
-              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </div>
             <button
               type="submit"
@@ -78,7 +102,7 @@ export default function EmailCapture({ buttonText = 'Follow the Journey', varian
               className="btn-primary flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50"
             >
               {isLoading ? (
-                'Submitting...'
+                'Joining...'
               ) : (
                 <>
                   {buttonText}
@@ -92,7 +116,9 @@ export default function EmailCapture({ buttonText = 'Follow the Journey', varian
             key="success"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-3 py-4 text-[#B8960C]"
+            className={`flex items-center justify-center gap-3 py-4 ${
+              isDark ? 'text-[#B8960C]' : 'text-[#B8960C]'
+            }`}
           >
             <div className="w-8 h-8 rounded-full bg-[#B8960C]/10 flex items-center justify-center">
               <Check size={18} />
@@ -102,9 +128,11 @@ export default function EmailCapture({ buttonText = 'Follow the Journey', varian
         )}
       </AnimatePresence>
 
+      {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
+
       {!isSubmitted && (
-        <p className="text-[#6B6B6B] text-sm mt-4 text-center sm:text-left">
-          Join the founding members. No spam, ever.
+        <p className={`text-sm mt-4 text-center sm:text-left ${isDark ? 'text-white/40' : 'text-[#6B6B6B]'}`}>
+          Join the waitlist. No spam, ever.
         </p>
       )}
     </div>

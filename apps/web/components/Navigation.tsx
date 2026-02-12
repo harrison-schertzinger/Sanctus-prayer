@@ -8,11 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/vision', label: 'Vision' },
-  { href: '/problem', label: 'Problem' },
-  { href: '/journey', label: 'Journey' },
-  { href: '/about', label: 'About' },
+  { href: '/#problem', label: 'The Problem' },
+  { href: '/#vision', label: 'Vision' },
+  { href: '/#journey', label: 'The Journey' },
+  { href: '/#about', label: 'About' },
 ];
 
 export default function Navigation() {
@@ -32,6 +31,19 @@ export default function Navigation() {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // If we're on the homepage and the link is a hash link, scroll smoothly
+    if (pathname === '/' && href.startsWith('/#')) {
+      e.preventDefault();
+      const id = href.replace('/#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <>
@@ -66,27 +78,25 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
                 className="relative group"
               >
-                <span
-                  className={`text-sm tracking-wide transition-colors duration-300 ${
-                    pathname === link.href
-                      ? 'text-[#B8960C]'
-                      : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
-                  }`}
-                >
+                <span className="text-sm tracking-wide transition-colors duration-300 text-[#6B6B6B] hover:text-[#1A1A1A]">
                   {link.label}
                 </span>
-                <span
-                  className={`absolute -bottom-1 left-0 h-[1px] bg-[#B8960C] transition-all duration-300 ${
-                    pathname === link.href ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}
-                />
-              </Link>
+                <span className="absolute -bottom-1 left-0 h-[1px] bg-[#B8960C] transition-all duration-300 w-0 group-hover:w-full" />
+              </a>
             ))}
+            <a
+              href="/#join"
+              onClick={(e) => handleNavClick(e, '/#join')}
+              className="btn-primary text-sm px-5 py-2.5"
+            >
+              Join the Waitlist
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -146,18 +156,28 @@ export default function Navigation() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      <Link
+                      <a
                         href={link.href}
-                        className={`text-xl font-serif ${
-                          pathname === link.href
-                            ? 'text-[#B8960C]'
-                            : 'text-[#1A1A1A]'
-                        }`}
+                        onClick={(e) => handleNavClick(e, link.href)}
+                        className="text-xl font-serif text-[#1A1A1A]"
                       >
                         {link.label}
-                      </Link>
+                      </a>
                     </motion.div>
                   ))}
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navLinks.length * 0.1 }}
+                  >
+                    <a
+                      href="/#join"
+                      onClick={(e) => handleNavClick(e, '/#join')}
+                      className="btn-primary inline-block text-center"
+                    >
+                      Join the Waitlist
+                    </a>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>

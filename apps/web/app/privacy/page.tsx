@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Sanctus Prayer',
-  description: 'Privacy Policy for the Sanctus Prayer mobile application.',
+  title: 'Privacy Policy | Sanctus Health & Performance',
+  description: 'Privacy Policy for Sanctus — the wellness wearable and companion app for contemplative prayer.',
 };
 
 export default function PrivacyPolicyPage() {
@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
         <div className="max-w-3xl mx-auto px-6">
           <div className="prose prose-lg max-w-none">
             <p className="text-[#6B6B6B] leading-relaxed mb-8">
-              Harrison Schertzinger (&ldquo;Developer,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) built Sanctus Prayer (&ldquo;the App&rdquo;) to help users grow in their spiritual life through contemplative prayer. This Privacy Policy explains how we collect, use, and protect your information.
+              Sanctus Health &amp; Performance (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) built Sanctus (&ldquo;the Product&rdquo;), including the Sanctus wearable band and companion app, to help users establish a consistent contemplative prayer practice. This Privacy Policy explains how we collect, use, and protect your information.
             </p>
 
             <h2 className="text-2xl font-serif text-[#1A1A1A] mt-12 mb-4">1. Information We Collect</h2>
@@ -98,8 +98,8 @@ export default function PrivacyPolicyPage() {
             </ul>
             <p className="text-[#6B6B6B] leading-relaxed mb-4">
               To request account deletion or exercise any of these rights, contact us at{' '}
-              <a href="mailto:harrison@theyoufirstproject.com" className="text-[#B8960C] hover:underline">
-                harrison@theyoufirstproject.com
+              <a href="mailto:harrison@sanctusprayer.com" className="text-[#B8960C] hover:underline">
+                harrison@sanctusprayer.com
               </a>.
             </p>
 
@@ -119,9 +119,9 @@ export default function PrivacyPolicyPage() {
             </p>
             <div className="bg-[#F5F3EF] rounded-2xl p-6 border border-[#E8DFC4]">
               <p className="text-[#1A1A1A] font-medium">Harrison Schertzinger</p>
-              <p className="text-[#6B6B6B]">Developer, Sanctus Prayer</p>
-              <a href="mailto:harrison@theyoufirstproject.com" className="text-[#B8960C] hover:underline">
-                harrison@theyoufirstproject.com
+              <p className="text-[#6B6B6B]">Founder, Sanctus Health &amp; Performance</p>
+              <a href="mailto:harrison@sanctusprayer.com" className="text-[#B8960C] hover:underline">
+                harrison@sanctusprayer.com
               </a>
             </div>
           </div>
