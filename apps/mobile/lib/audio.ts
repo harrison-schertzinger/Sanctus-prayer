@@ -39,9 +39,9 @@ export async function initializeAudio(): Promise<void> {
       staysActiveInBackground: false,
       shouldDuckAndroid: true,
     });
-    if (__DEV__) console.log('🔊 Audio initialized');
+    console.log('[Audio] initialized');
   } catch (error) {
-    if (__DEV__) console.warn('Failed to initialize audio:', error);
+    console.warn('[Audio] Failed to initialize:', error);
   }
 }
 
@@ -108,7 +108,7 @@ export async function playSound(soundName: SoundName, volume: number = 0.8): Pro
     await sound.setVolumeAsync(volume);
     await sound.playAsync();
   } catch (error) {
-    if (__DEV__) console.warn(`Failed to play sound "${soundName}":`, error);
+    console.warn(`[Audio] Failed to play sound "${soundName}":`, error);
   }
 }
 
@@ -152,7 +152,7 @@ export async function playSoundWithFade(
     // Get duration of the sound
     const status = await sound.getStatusAsync();
     if (!status.isLoaded) {
-      if (__DEV__) console.warn(`Sound "${soundName}" failed to load`);
+      console.warn(`[Audio] Sound "${soundName}" failed to load`);
       return;
     }
 
@@ -179,7 +179,7 @@ export async function playSoundWithFade(
     await sound.stopAsync();
     await sound.unloadAsync();
   } catch (error) {
-    if (__DEV__) console.warn(`Failed to play sound with fade "${soundName}":`, error);
+    console.warn(`[Audio] Failed to play sound with fade "${soundName}":`, error);
   }
 }
 

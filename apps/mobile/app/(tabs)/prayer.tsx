@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronDown, Wind, BookOpen, Heart, Sun, Sparkles } from 'lucide-react-native';
+import { ChevronDown, Wind, BookOpen, Heart } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { colors, spacing, radius } from '@/lib/colors';
 import { practices } from '@/lib/content';
@@ -18,8 +18,6 @@ import { ConcentricTimerSelector } from '@/components/ui/ConcentricTimerSelector
 import { TimerStatsBar } from '@/components/ui/TimerStatsBar';
 import { SettingsGear } from '@/components/ui/SettingsGear';
 import { useAuth } from '@/contexts/AuthContext';
-
-type PracticeKey = 'peace' | 'joy';
 
 // 40-day journey configuration
 const TOTAL_DAYS = 40;
@@ -37,9 +35,7 @@ function getJourneyDay(journeyStartDate: string | null | undefined): number {
 
 export default function PrayerScreen() {
   const router = useRouter();
-  const [selectedPractice, setSelectedPractice] = useState<PracticeKey>('peace');
   const [peaceExpanded, setPeaceExpanded] = useState(false);
-  const [joyExpanded, setJoyExpanded] = useState(false);
   const [timerValues, setTimerValues] = useState({
     preparation: 5,  // seconds
     interval: 5,     // minutes
@@ -47,7 +43,6 @@ export default function PrayerScreen() {
   });
 
   const peaceChevronRotation = useRef(new Animated.Value(0)).current;
-  const joyChevronRotation = useRef(new Animated.Value(0)).current;
 
   const { profile } = useAuth();
   const { sessions } = useStorage();
@@ -59,7 +54,7 @@ export default function PrayerScreen() {
     router.push({
       pathname: '/practice/[id]',
       params: {
-        id: selectedPractice,
+        id: 'peace',
         duration: timerValues.total.toString(),
         preparation: timerValues.preparation.toString(),
         interval: timerValues.interval.toString(),
@@ -67,16 +62,8 @@ export default function PrayerScreen() {
     });
   };
 
-  const selectPractice = (key: PracticeKey) => {
-    if (selectedPractice !== key) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setSelectedPractice(key);
-    }
-  };
-
   const togglePeaceExpanded = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    selectPractice('peace');
 
     Animated.spring(peaceChevronRotation, {
       toValue: peaceExpanded ? 0 : 1,
@@ -86,22 +73,6 @@ export default function PrayerScreen() {
 
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setPeaceExpanded(!peaceExpanded);
-    if (joyExpanded) setJoyExpanded(false);
-  };
-
-  const toggleJoyExpanded = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    selectPractice('joy');
-
-    Animated.spring(joyChevronRotation, {
-      toValue: joyExpanded ? 0 : 1,
-      useNativeDriver: true,
-      friction: 8,
-    }).start();
-
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setJoyExpanded(!joyExpanded);
-    if (peaceExpanded) setPeaceExpanded(false);
   };
 
   const peaceChevronStyle = {
@@ -113,17 +84,7 @@ export default function PrayerScreen() {
     }],
   };
 
-  const joyChevronStyle = {
-    transform: [{
-      rotate: joyChevronRotation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '180deg'],
-      }),
-    }],
-  };
-
   const peace = practices.peace;
-  const joy = practices.joy;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -153,10 +114,7 @@ export default function PrayerScreen() {
         {/* ===== PEACE PRACTICE CARD ===== */}
         <AnimatedEntrance delay={50}>
           <PressableScale scaleValue={0.98} haptic="light" onPress={togglePeaceExpanded}>
-            <View style={[
-              styles.practiceCard,
-              selectedPractice === 'peace' && styles.practiceCardSelected,
-            ]}>
+            <View style={styles.practiceCard}>
               {/* Cover Image */}
               <Image
                 source={require('@/assets/peace-in-his-presence.png')}
@@ -296,156 +254,6 @@ export default function PrayerScreen() {
           )}
         </AnimatedEntrance>
 
-        {/* ===== JOY PRACTICE CARD ===== */}
-        <AnimatedEntrance delay={75}>
-          <PressableScale scaleValue={0.98} haptic="light" onPress={toggleJoyExpanded}>
-            <View style={[
-              styles.joyCard,
-              selectedPractice === 'joy' && styles.practiceCardSelected,
-            ]}>
-              <LinearGradient
-                colors={['#4A2810', '#7B3F1A', '#B8651A']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFillObject}
-              />
-
-              {/* Top row */}
-              <View style={styles.topRow}>
-                <Text style={styles.practiceLabel}>SANCTUS PRACTICE</Text>
-                <View style={styles.joyBadge}>
-                  <Sparkles size={12} color="#FFD700" strokeWidth={2} />
-                </View>
-              </View>
-
-              {/* Content overlay */}
-              <View style={styles.joyOverlay}>
-                <View style={styles.joyIconRow}>
-                  <Sun size={20} color="#FFD700" strokeWidth={1.5} />
-                </View>
-                <Text style={styles.joyTitle}>THE HABIT</Text>
-                <Text style={styles.practiceSubtitle}>— of —</Text>
-                <Text style={styles.joyTitle}>JOY</Text>
-
-                <View style={styles.expandIndicator}>
-                  <Text style={styles.expandText}>
-                    {joyExpanded ? 'Tap to collapse' : 'Tap for details'}
-                  </Text>
-                  <Animated.View style={joyChevronStyle}>
-                    <ChevronDown size={14} color="rgba(255,255,255,0.6)" strokeWidth={2} />
-                  </Animated.View>
-                </View>
-              </View>
-            </View>
-          </PressableScale>
-
-          {/* Expanded Joy Details */}
-          {joyExpanded && (
-            <View style={styles.expandedContent}>
-              {/* Scripture */}
-              <View style={styles.joyScriptureSection}>
-                <Text style={styles.joyScriptureText}>"{joy.scripture.text}"</Text>
-                <Text style={styles.joyScriptureRef}>{joy.scripture.reference}</Text>
-              </View>
-
-              {/* Phase 1: Recollection */}
-              <View style={styles.phaseSection}>
-                <View style={styles.phaseHeader}>
-                  <View style={[styles.phaseAccent, { backgroundColor: '#7B3F1A' }]} />
-                  <View style={styles.phaseHeaderContent}>
-                    <View style={styles.phaseTitleRow}>
-                      <Wind size={18} color="#E8A04C" strokeWidth={2} />
-                      <Text style={styles.phaseNumber}>01</Text>
-                    </View>
-                    <Text style={[styles.phaseTitle, { color: '#E8A04C' }]}>Recollection</Text>
-                    <Text style={styles.phaseSubtitle}>Grateful Stillness</Text>
-                  </View>
-                </View>
-                <View style={styles.phaseBody}>
-                  <Text style={styles.phaseDescription}>
-                    Settle into silence. Let gratitude begin to rise naturally as you become present to God's gifts in this moment.
-                  </Text>
-                  <View style={[styles.breathPatternContainer, { backgroundColor: 'rgba(122, 63, 26, 0.2)' }]}>
-                    <Text style={[styles.breathPatternLabel, { color: '#E8A04C' }]}>5-4-7 BREATH</Text>
-                    <View style={styles.breathPatternRow}>
-                      <Text style={styles.breathPatternPhase}>Inhale</Text>
-                      <Text style={[styles.breathPatternTiming, { color: '#E8A04C' }]}>5 seconds</Text>
-                    </View>
-                    <View style={styles.breathPatternRow}>
-                      <Text style={styles.breathPatternPhase}>Hold</Text>
-                      <Text style={[styles.breathPatternTiming, { color: '#E8A04C' }]}>4 seconds</Text>
-                    </View>
-                    <View style={styles.breathPatternRow}>
-                      <Text style={styles.breathPatternPhase}>Exhale</Text>
-                      <Text style={[styles.breathPatternTiming, { color: '#E8A04C' }]}>7 seconds</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-
-              {/* Phase 2: Contemplation */}
-              <View style={styles.phaseSection}>
-                <View style={styles.phaseHeader}>
-                  <View style={[styles.phaseAccent, { backgroundColor: '#B8860B' }]} />
-                  <View style={styles.phaseHeaderContent}>
-                    <View style={styles.phaseTitleRow}>
-                      <BookOpen size={18} color="#FFD700" strokeWidth={2} />
-                      <Text style={styles.phaseNumber}>02</Text>
-                    </View>
-                    <Text style={[styles.phaseTitle, { color: '#FFD700' }]}>Contemplation</Text>
-                    <Text style={styles.phaseSubtitle}>Breath Prayer of Joy</Text>
-                  </View>
-                </View>
-                <View style={styles.phaseBody}>
-                  <Text style={styles.phaseDescription}>
-                    Let thanksgiving become prayer. Each breath carries gratitude to the Lord and receives His nearness in return.
-                  </Text>
-                  <View style={[styles.breathContainer, { backgroundColor: 'rgba(184, 134, 11, 0.2)' }]}>
-                    <View style={styles.breathRow}>
-                      <Text style={[styles.breathDirection, { color: '#FFD700' }]}>Inhale</Text>
-                      <Text style={styles.breathPhrase}>{joy.phases.contemplation.inhalePhrase}</Text>
-                    </View>
-                    <View style={[styles.breathRow, { marginBottom: 0 }]}>
-                      <Text style={[styles.breathDirection, { color: '#FFD700' }]}>Exhale</Text>
-                      <Text style={styles.breathPhrase}>{joy.phases.contemplation.exhalePhrase}</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-
-              {/* Phase 3: Praise & Petition */}
-              <View style={[styles.phaseSection, { borderBottomWidth: 0 }]}>
-                <View style={styles.phaseHeader}>
-                  <View style={[styles.phaseAccent, { backgroundColor: '#722F37' }]} />
-                  <View style={styles.phaseHeaderContent}>
-                    <View style={styles.phaseTitleRow}>
-                      <Heart size={18} color="#C4737B" strokeWidth={2} />
-                      <Text style={styles.phaseNumber}>03</Text>
-                    </View>
-                    <Text style={[styles.phaseTitle, { color: '#C4737B' }]}>Praise & Petition</Text>
-                    <Text style={styles.phaseSubtitle}>Active Prayer</Text>
-                  </View>
-                </View>
-                <View style={styles.phaseBody}>
-                  <Text style={styles.phaseDescription}>
-                    Let joy overflow into active prayer:
-                  </Text>
-                  <View style={styles.actionList}>
-                    <View style={styles.actionItem}>
-                      <Text style={styles.actionLabel}>Gratitude</Text>
-                      <Text style={styles.actionText}>Name three specific blessings — savor each one</Text>
-                    </View>
-                    <View style={styles.actionItem}>
-                      <Text style={styles.actionLabel}>Petition</Text>
-                      <Text style={styles.actionText}>Ask for the grace of joy for yourself and those you love</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View>
-          )}
-        </AnimatedEntrance>
-
         {/* Timer Selector */}
         <AnimatedEntrance delay={100}>
           <View style={styles.timerSection}>
@@ -466,7 +274,7 @@ export default function PrayerScreen() {
         {/* Begin Button */}
         <AnimatedEntrance delay={150}>
           <GoldButton onPress={handleBegin}>
-            {`Begin ${selectedPractice === 'peace' ? 'Peace' : 'Joy'} Practice`}
+Begin Peace Practice
           </GoldButton>
         </AnimatedEntrance>
 
@@ -512,10 +320,6 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
     }),
-  },
-  practiceCardSelected: {
-    borderWidth: 2,
-    borderColor: colors.gold,
   },
   practiceImage: {
     ...StyleSheet.absoluteFillObject,
@@ -569,67 +373,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     color: '#FFFFFF',
-  },
-
-  // Joy Card - Gradient-based
-  joyCard: {
-    height: 156,
-    borderRadius: radius.xl,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
-  },
-  joyBadge: {
-    backgroundColor: 'rgba(255,215,0,0.2)',
-    padding: spacing.xs,
-    borderRadius: radius.full,
-  },
-  joyOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
-    padding: spacing.md,
-    paddingBottom: spacing.sm,
-  },
-  joyIconRow: {
-    marginBottom: spacing.xs,
-  },
-  joyTitle: {
-    fontSize: 26,
-    fontWeight: '300',
-    color: '#FFFFFF',
-    fontFamily: 'Georgia',
-    letterSpacing: 1.5,
-  },
-
-  // Joy Scripture section in expanded
-  joyScriptureSection: {
-    padding: spacing.lg,
-    backgroundColor: 'rgba(184, 134, 11, 0.1)',
-    alignItems: 'center',
-  },
-  joyScriptureText: {
-    fontSize: 15,
-    fontStyle: 'italic',
-    color: 'rgba(255,255,255,0.8)',
-    fontFamily: 'Georgia',
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: spacing.sm,
-  },
-  joyScriptureRef: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#FFD700',
-    letterSpacing: 0.5,
   },
 
   // Expand indicator

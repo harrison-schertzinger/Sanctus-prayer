@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -6,6 +7,7 @@ import * as Notifications from 'expo-notifications';
 import { colors } from '@/lib/colors';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { initializeAudio } from '@/lib/audio';
 
 // Configure notifications handler
 // Permissions are requested after onboarding in journey-start.tsx
@@ -20,6 +22,10 @@ Notifications.setNotificationHandler({
 });
 
 export default function RootLayout() {
+  useEffect(() => {
+    initializeAudio();
+  }, []);
+
   return (
     <ErrorBoundary>
       <GestureHandlerRootView style={styles.container}>
