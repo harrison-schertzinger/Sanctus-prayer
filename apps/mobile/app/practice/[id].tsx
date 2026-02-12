@@ -19,13 +19,19 @@ import { getLocalDateKey } from '@/lib/dates';
 const PHASE_ORDER: PracticePhaseType[] = ['recollection', 'contemplation', 'praise'];
 
 export default function PracticeScreen() {
-  const { id, duration: durationParam } = useLocalSearchParams<{
+  const params = useLocalSearchParams<{
     id: string;
     duration: string;
   }>();
 
-  const practiceId = (id as PracticeId) || 'peace';
-  const duration = (parseInt(durationParam || '10') as 5 | 10 | 15) || 10;
+  const { id, duration: durationParam } = params;
+
+  console.log('[PracticeScreen] params:', JSON.stringify(params));
+
+  const practiceId = (id === 'peace' || id === 'joy') ? id : 'peace';
+  const duration = Math.max(5, Math.min(60, parseInt(String(durationParam) || '15', 10) || 15));
+
+  console.log('[PracticeScreen] practiceId:', practiceId, 'duration:', duration);
 
   const [hasStarted, setHasStarted] = useState(false);
   const [completionMessage, setCompletionMessage] = useState('');

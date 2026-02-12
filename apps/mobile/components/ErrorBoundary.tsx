@@ -21,9 +21,9 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (__DEV__) {
-      console.error('ErrorBoundary caught:', error, errorInfo);
-    }
+    // Always log errors — critical for diagnosing TestFlight/production crashes
+    console.error('ErrorBoundary caught:', error.message, error.stack);
+    console.error('Component stack:', errorInfo.componentStack);
   }
 
   handleRestart = () => {

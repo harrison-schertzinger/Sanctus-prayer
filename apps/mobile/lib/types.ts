@@ -101,11 +101,30 @@ export interface DurationConfig {
   praise: number;         // minutes
 }
 
-export const DURATION_CONFIGS: Record<5 | 10 | 15, DurationConfig> = {
+export const DURATION_CONFIGS: Record<number, DurationConfig> = {
   5: { recollection: 2, contemplation: 2, praise: 1 },
   10: { recollection: 3, contemplation: 4, praise: 3 },
   15: { recollection: 5, contemplation: 5, praise: 5 },
 };
+
+/**
+ * Get duration config for any total duration in minutes.
+ * Uses preset configs for 5/10/15, and proportional scaling for all other values.
+ * This supports the ConcentricTimerSelector which allows 5-60 minute durations.
+ */
+export function getDurationConfig(totalMinutes: number): DurationConfig {
+  // Use preset if available
+  if (DURATION_CONFIGS[totalMinutes]) {
+    return DURATION_CONFIGS[totalMinutes];
+  }
+
+  // Proportional split: ~33% recollection, ~40% contemplation, ~27% praise
+  const recollection = Math.round(totalMinutes * 0.33);
+  const contemplation = Math.round(totalMinutes * 0.40);
+  const praise = totalMinutes - recollection - contemplation;
+
+  return { recollection, contemplation, praise };
+}
 
 // Milestone Types
 export interface Milestone {

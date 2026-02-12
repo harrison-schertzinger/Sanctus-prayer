@@ -22,6 +22,8 @@ export default function BreathAnimation({
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(0.4)).current;
   const innerScale = useRef(new Animated.Value(0.6)).current;
+  const middleScaleFactor = useRef(new Animated.Value(0.85)).current;
+  const middleOpacityFactor = useRef(new Animated.Value(0.7)).current;
 
   useEffect(() => {
     if (!isRunning) {
@@ -95,10 +97,10 @@ export default function BreathAnimation({
           {
             transform: [
               {
-                scale: Animated.multiply(scale, 0.85),
+                scale: Animated.multiply(scale, middleScaleFactor),
               },
             ],
-            opacity: Animated.multiply(opacity, 0.7),
+            opacity: Animated.multiply(opacity, middleOpacityFactor),
           },
         ]}
       />

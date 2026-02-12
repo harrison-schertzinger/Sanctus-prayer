@@ -3,8 +3,7 @@ import {
   PracticePhaseType,
   BreathPhase,
   PraiseSubphase,
-  DurationConfig,
-  DURATION_CONFIGS,
+  getDurationConfig,
   BreathPattern,
 } from '@/lib/types';
 import { practices } from '@/lib/content';
@@ -41,7 +40,7 @@ interface TimerState {
 
 interface UsePracticeTimerOptions {
   practiceId: 'peace' | 'joy';
-  duration: 5 | 10 | 15;
+  duration: number;
   onPhaseChange?: (phase: PracticePhaseType) => void;
   onBreathChange?: (breath: BreathPhase) => void;
   onComplete?: () => void;
@@ -59,7 +58,14 @@ export function usePracticeTimer({
   hapticEnabled = true,
 }: UsePracticeTimerOptions) {
   const practice = practices[practiceId];
-  const durationConfig = DURATION_CONFIGS[duration];
+
+  if (!practice) {
+    console.error('[usePracticeTimer] FATAL: practice is undefined for practiceId:', practiceId);
+  }
+
+  const durationConfig = getDurationConfig(duration);
+
+  console.log('[usePracticeTimer] practice:', practice?.name, 'durationConfig:', JSON.stringify(durationConfig));
 
   // Calculate phase durations in seconds
   const phaseDurations = {
